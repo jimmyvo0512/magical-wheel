@@ -17,7 +17,12 @@ public class TCPPacketEncoder
 {
     List<byte> buffer;
 
-    public void ToArray() => buffer.ToArray();
+    public TCPPacketEncoder()
+    {
+        buffer = new List<byte>();
+    }
+
+    public byte[] ToArray() => buffer.ToArray();
 
     public void AddInt(int n) => buffer.AddRange(BitConverter.GetBytes(n));
     public void AddFloat(float f) => buffer.AddRange(BitConverter.GetBytes(f));

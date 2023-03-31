@@ -46,6 +46,7 @@ public class TCPSocket
         {
             Debug.LogError(err);
             Disconnect();
+            throw err;
         }
     }
 
