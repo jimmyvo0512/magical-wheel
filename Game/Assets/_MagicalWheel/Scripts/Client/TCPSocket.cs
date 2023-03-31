@@ -1,21 +1,13 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using UnityEngine;
 
 public class TCPSocket
 {
     const int DATA_SIZE = 4096;
 
-    TCPHandler handler;
-
     TcpClient socket;
     byte[] rcvBuffer;
-
-    public TCPSocket()
-    {
-        handler = new TCPHandler();
-    }
 
     public void Disconnect()
     {
@@ -44,9 +36,7 @@ public class TCPSocket
         }
         catch (Exception err)
         {
-            Debug.LogError(err);
-            Disconnect();
-            throw err;
+            PanicDisconnect(err);
         }
     }
 
@@ -58,20 +48,16 @@ public class TCPSocket
         }
         catch (SocketException err)
         {
-            if (err.SocketErrorCode == SocketError.WouldBlock)
+            if (err.SocketErrorCode != SocketError.WouldBlock)
             {
-                Debug.Log(err);
-                BeginSend(data);
-                return;
+                PanicDisconnect(err);
             }
 
-            Debug.LogError(err);
-            Disconnect();
+            BeginSend(data);
         }
         catch (Exception err)
         {
-            Debug.LogError(err);
-            Disconnect();
+            PanicDisconnect(err);
         }
     }
 
@@ -94,8 +80,7 @@ public class TCPSocket
         }
         catch (Exception err)
         {
-            Debug.LogError(err);
-            Disconnect();
+            PanicDisconnect(err);
         }
     }
 
@@ -114,14 +99,19 @@ public class TCPSocket
             var data = new byte[len];
             Array.Copy(rcvBuffer, data, len);
 
-            handler.HandleData(data);
+            TCPHandler.HandleData(data);
 
             BeginReceive();
         }
         catch (Exception err)
         {
-            Debug.LogError(err);
-            Disconnect();
+            PanicDisconnect(err);
         }
+    }
+
+    private void PanicDisconnect(Exception err)
+    {
+        Disconnect();
+        throw err;
     }
 }
