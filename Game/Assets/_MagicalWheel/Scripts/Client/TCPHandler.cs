@@ -51,29 +51,27 @@ public class TCPHandler
     private static void ResponseRegistration(TCPDecoder decoder)
     {
         var ok = decoder.GetBool();
-        if (ok)
-        {
-            return;
-        }
-
-        var err = decoder.GetString();
+        var playerOrErr = decoder.GetString();
+        GameMgr.Instance.ResponseRegistration(ok, playerOrErr);
     }
 
     private static void InformNewPlayer(TCPDecoder decoder)
     {
         var player = decoder.GetString();
+        GameMgr.Instance.InformNewPlayer(player);
     }
 
     private static void SendGameQuestion(TCPDecoder decoder)
     {
         var question = decoder.GetString();
         var answerLen = decoder.GetInt();
-        var hint = decoder.GetString();
+        GameMgr.Instance.SendGameQuestion(question, answerLen);
     }
 
     private static void Turn(TCPDecoder decoder)
     {
         var player = decoder.GetString();
+        GameMgr.Instance.Turn(player);
     }
 
     private static void EndGame(TCPDecoder decoder)

@@ -12,4 +12,21 @@ public class GameSceneMgr : MonoBehaviour
     {
         quitButton.onClick.AddListener(Application.Quit);
     }
+
+    public void SetQuestion(string question, int answerLen)
+    {
+        questionText.text = question;
+
+        hintText.text = string.Empty;
+        for (var i = 0; i < answerLen; i++)
+        {
+            hintText.text += '*';
+        }
+    }
+
+    public void SetTurn(bool canPlay)
+    {
+        answerInputField.interactable = canPlay;
+        submitButton.interactable = canPlay;
+    }
 }

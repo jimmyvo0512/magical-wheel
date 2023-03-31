@@ -12,5 +12,24 @@ public class RegisterSceneMgr : MonoBehaviour
     private void Awake()
     {
         quitButton.onClick.AddListener(Application.Quit);
+        submitButton.onClick.AddListener(SubmitName);
+    }
+
+    public void SetStatus(string status, bool canSubmit)
+    {
+        statusText.text = status;
+        SetCanSubmit(canSubmit);
+    }
+
+    private void SubmitName()
+    {
+        TCP.Register(nameInputField.text);
+        SetCanSubmit(false);
+    }
+
+    private void SetCanSubmit(bool canSubmit)
+    {
+        nameInputField.interactable = canSubmit;
+        submitButton.interactable = canSubmit;
     }
 }
