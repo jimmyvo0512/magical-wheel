@@ -1,0 +1,74 @@
+What is a TCP socket?
+Endpoint
+What is the protocol used by TCP sockets?
+TCP
+What is the difference between a socket and a port?
+Function
+What is the maximum number of TCP sockets that can be open on a single machine?
+Limit
+What is the purpose of a TCP socket?
+Communication
+What is a socket address?
+Identifier
+How is a TCP socket identified?
+Tuple
+What is the socket API used for?
+Control
+What is a listening socket?
+Passive
+What is a connected socket?
+Active
+What is the Application Layer?
+Top
+What is the role of the Application Layer in the protocol stack?
+Interface
+What is an application protocol?
+Standard
+What is the difference between a client and a server application?
+Function
+What is a message format in the Application Layer?
+Syntax
+What is an API in the context of the Application Layer?
+Interface
+What is the purpose of the Application Layer?
+Services
+What is a network application?
+Program
+What is the importance of the Application Layer in networking?
+User-facing
+What is C#?
+Language
+Who created C#?
+Microsoft
+What is C# used for?
+Development
+What is the syntax of C#?
+C-like
+What is the latest version of C#?
+10
+Is C# an object-oriented language?
+Yes
+What is the Common Language Runtime (CLR)?
+Environment
+What is a namespace in C#?
+Scope
+What is a delegate in C#?
+Type
+What is C++?
+Language
+What is C++ used for?
+Programming
+What is the syntax of C++?
+C-like
+Is C++ an object-oriented language?
+Yes
+What is the difference between C and C++?
+Classes
+What is a pointer in C++?
+Address
+What is a class in C++?
+Blueprint
+What is an object in C++?
+Instance
+What is a template in C++?
+Generic

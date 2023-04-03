@@ -16,3 +16,11 @@ Client::get_join_time() const {
 int Client::get_points() const { return m_points; }
 
 void Client::add_points(int points) { m_points += points; }
+
+void Client::sendEvent(const std::string &event) {
+  std::string message = "EVENT " + event + "\n";
+  int bytes_sent = m_socket.send(message.c_str(), message.length());
+  if (bytes_sent == -1) {
+    // Handle error...
+  }
+}

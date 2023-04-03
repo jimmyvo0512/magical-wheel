@@ -12,6 +12,7 @@ public:
   std::chrono::time_point<std::chrono::system_clock> get_join_time() const;
   int get_points() const;
   void add_points(int points);
+  void sendEvent(const std::string &event);
 
 private:
   int m_id;

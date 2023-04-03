@@ -1,8 +1,4 @@
 #include "socket.h"
-#include <cstring>
-#include <iostream>
-#include <sys/socket.h>
-#include <unistd.h>
 
 Socket::Socket() : m_socket(0) {}
 
