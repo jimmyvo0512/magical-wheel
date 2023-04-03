@@ -50,7 +50,7 @@ private:
   void send_question_to_player(Client &client);
   void send_game_over_message();
 
-  void broadcast(const std::string &event);
+  void broadcast(const string &event);
 };
 
 #endif

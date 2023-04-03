@@ -4,6 +4,8 @@
 #include "client.h"
 #include "game.h"
 
+using namespace std;
+
 void *handle_client(void *wrapped_processor);
 void *handle_socket_connection(void *wrapped_game);
 

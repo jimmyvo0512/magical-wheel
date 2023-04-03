@@ -29,7 +29,7 @@ bool Socket::accept(Socket &client_socket) {
   return false;
 }
 
-bool Socket::connect(const std::string &address, int port) {
+bool Socket::connect(const string &address, int port) {
   m_address.sin_family = AF_INET;
   m_address.sin_port = htons(port);
   if (inet_pton(AF_INET, address.c_str(), &m_address.sin_addr) <= 0) {

@@ -1,44 +1,77 @@
 #include "core/socket.h"
 #include <cstring>
+#include <iomanip>
 #include <iostream>
+
+using namespace std;
+
+char *generateCharArray(string inputString) {
+  int stringLength = inputString.length();
+  cout << "String length: " << stringLength << " " << inputString << endl;
+  char *result = new char[stringLength + 5];
+  result[0] = 0x01;
+  memcpy(&result[1], &stringLength, 4);
+  memcpy(&(result[5]), inputString.c_str(), stringLength);
+
+  return result;
+}
 
 int main() {
   Socket socket;
   if (!socket.create()) {
-    std::cerr << "Failed to create socket" << std::endl;
+    cerr << "Failed to create socket" << endl;
     return 1;
   }
 
   if (!socket.connect("127.0.0.1", 8080)) {
-    std::cerr << "Failed to connect to server" << std::endl;
+    cerr << "Failed to connect to server" << endl;
     return 1;
   }
 
-  std::cout << "Connected to server" << std::endl;
+  cout << "Connected to server" << endl;
+  string name = "Tennayne";
+
+  char *registration_message = generateCharArray(name);
+  // char *cp = new char[10];
+  // memcpy(cp, &registration_message[5],
+  //        9); // copy the string into the char array
+  //
+  // cout << "this is registration message: " << cp << endl;
+  cout << "Buffer ";
+  for (int i = 0; i < name.length() + 5; i++) {
+    cout << setw(2) << setfill('0') << hex << (int)registration_message[i]
+         << " ";
+  }
+  cout << endl;
+
+  if (!socket.send(registration_message, name.length() + 5)) {
+    cerr << "Failed to send message to server" << endl;
+    return 1;
+  }
 
   while (true) {
-    std::cout << "> ";
-    std::string message;
-    std::getline(std::cin, message);
+    cout << "> ";
+    string message;
+    getline(cin, message);
 
     if (message.empty()) {
       continue;
     }
 
     if (!socket.send(message.c_str(), message.length())) {
-      std::cerr << "Failed to send message to server" << std::endl;
+      cerr << "Failed to send message to server" << endl;
       break;
     }
 
     char buffer[1024];
     int received_bytes = socket.receive(buffer, sizeof(buffer));
     if (received_bytes <= 0) {
-      std::cerr << "Failed to receive message from server" << std::endl;
+      cerr << "Failed to receive message from server" << endl;
       break;
     }
 
     buffer[received_bytes] = '\0';
-    std::cout << "Received message from server: " << buffer << std::endl;
+    cout << "Received message from server: " << buffer << endl;
   }
 
   socket.close();

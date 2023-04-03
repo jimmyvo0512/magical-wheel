@@ -14,7 +14,7 @@ void Game::start() {
   int rc = pthread_create(&listen_to_connection_thread, NULL,
                           handle_socket_connection, (void *)this);
   while (true) {
-    cout << "Waiting for players" << endl;
+    // cout << "Waiting for players" << endl;
   }
 }
 
@@ -56,7 +56,7 @@ int Game::start_socket() {
   }
 
   // Start listen
-  if (!m_server_socket.listen()) {
+  if (!m_server_socket.listen(2)) {
     cerr << "Failed to listen on socket" << endl;
     return 1;
   }

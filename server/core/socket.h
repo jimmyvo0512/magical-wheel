@@ -8,6 +8,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+using namespace std;
+
 class Socket {
 public:
   Socket();
@@ -15,7 +17,7 @@ public:
   bool bind(int port);
   bool listen(int backlog = 5);
   bool accept(Socket &client_socket);
-  bool connect(const std::string &address, int port);
+  bool connect(const string &address, int port);
   bool send(const char *buffer, int size);
   int receive(char *buffer, int size);
   bool close();
