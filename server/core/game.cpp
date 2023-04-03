@@ -1,9 +1,12 @@
 #include "game.h"
 #include "thread_handler.h"
 #include "thread_processor.h"
+#include <cstdlib>
 
 Game::Game(string filename, int port)
     : m_random_engine(chrono::system_clock::now().time_since_epoch().count()) {
+  this->is_started = false;
+  turn = 0;
   load_questions_and_answers(filename);
   if (start_socket() == 1)
     throw "Failed to start socket";
@@ -15,9 +18,15 @@ void Game::start() {
                           handle_socket_connection, (void *)this);
   while (true) {
     if (!this->is_started)
-      break;
+      continue;
+    // cout << "Start game" << endl;
 
-    this->broadcast("Game started");
+    if (turn == 0) {
+      sleep(5);
+      cout << "Broadcast Start game" << endl;
+      this->broadcast("Game started");
+      turn += 1;
+    }
   }
 }
 
@@ -32,7 +41,7 @@ void Game::listen_to_connection() {
     }
 
     // Add the player to the game
-    Client *client = new Client(1092, client_socket);
+    Client *client = new Client(rand(), client_socket);
     int player_id = client->get_id();
     m_clients.insert(make_pair(player_id, client));
 
@@ -46,23 +55,28 @@ void Game::listen_to_connection() {
 }
 
 void Game::client_register(Client *client, string name) {
-  cout << "hea" << client->get_id() << endl;
   try {
     // m_mutex.lock();
     client->client_register(name);
-    cout << "healsda" << endl;
     if (this->is_started) {
       this->m_waiting_pool.push_back(client);
+      cout << " - Add client " << client->get_name() << " to waiting pool"
+           << endl;
     } else {
       this->m_playing_pool.push_back(client);
+      cout << " - Add client " << client->get_name() << " to playing pool"
+           << endl;
     }
+    cout << " ==> Playing pool length: " << this->m_playing_pool.size() << endl;
 
-    if (this->m_playing_pool.size() == 3) {
-      this->is_started = true;
-    }
     // m_mutex.unlock();
 
     this->broadcast(name + " joined");
+
+    if (this->m_playing_pool.size() == 2) {
+      this->is_started = true;
+      this->turn = 0;
+    }
   } catch (const char *e) {
     cout << "Error: Client register failed. Err: " << e << endl;
   }
@@ -93,9 +107,11 @@ void Game::load_questions_and_answers(string filename) {
   ifstream file(filename);
   if (file.is_open()) {
     string line1, line2;
-    while (getline(file, line1) && getline(file, line2)) {
-      m_questions_and_answers.push_back(pair<string, string>(line1, line2));
-    }
+    getline(file, line1);
+    int numPair = stoi(line1);
+    for (int i = 0; i < numPair; ++i)
+      if (getline(file, line1) && getline(file, line2))
+        m_questions_and_answers.push_back(pair<string, string>(line2, line1));
     file.close();
   } else {
     cerr << "Failed to open file " << filename << endl;
@@ -122,7 +138,16 @@ void Game::send_game_over_message() {
 
 void Game::broadcast(const string &event) {
   // lock_guard<mutex> lock(m_clientMutex);
-  for (auto &client : m_clients) {
-    client.second->sendEvent(event);
+  // for (auto &client : m_clients) {
+  //   client.second->sendEvent(event);
+  // }
+  // for (std::map<int, Client *>::iterator it = .begin();
+  //      it != m_clients.end(); it++) {
+  //   cout << "HERE PRINT" << it->first << ": " << it->second->get_name() <<
+  //   endl; it->second->sendEvent(event); it++;
+  // }
+  for (auto &client : m_playing_pool) {
+    cout << "HERE PRINT: " << client->get_name() << " " << event;
+    client->sendEvent(event);
   }
 }

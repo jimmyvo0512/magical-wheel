@@ -39,6 +39,7 @@ void Client::sendEvent(const string &event) {
   string message = "EVENT " + event + "\n";
   int bytes_sent = m_socket.send(message.c_str(), message.length());
   if (bytes_sent == -1) {
+    cout << "SEND ERR";
     // Handle error...
   }
 }

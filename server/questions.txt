@@ -1,74 +1,76 @@
-What is a TCP socket?
+37
 Endpoint
-What is the protocol used by TCP sockets?
+What is a TCP socket?
 TCP
+What is the protocol used by TCP sockets?
+Function
 What is the difference between a socket and a port?
-Function
-What is the maximum number of TCP sockets that can be open on a single machine?
 Limit
-What is the purpose of a TCP socket?
+What is the maximum number of TCP sockets that can be open on a single machine?
 Communication
-What is a socket address?
+What is the purpose of a TCP socket?
 Identifier
-How is a TCP socket identified?
+What is a socket address?
 Tuple
-What is the socket API used for?
+How is a TCP socket identified?
 Control
-What is a listening socket?
+What is the socket API used for?
 Passive
-What is a connected socket?
+What is a listening socket?
 Active
-What is the Application Layer?
+What is a connected socket?
 Top
+What is the Application Layer?
+Interface
 What is the role of the Application Layer in the protocol stack?
-Interface
-What is an application protocol?
 Standard
-What is the difference between a client and a server application?
+What is an application protocol?
 Function
-What is a message format in the Application Layer?
+What is the difference between a client and a server application?
 Syntax
-What is an API in the context of the Application Layer?
+What is a message format in the Application Layer?
 Interface
-What is the purpose of the Application Layer?
+What is an API in the context of the Application Layer?
 Services
-What is a network application?
+What is the purpose of the Application Layer?
 Program
-What is the importance of the Application Layer in networking?
+What is a network application?
 User-facing
+What is the importance of the Application Layer in networking?
+Language
 What is C#?
-Language
-Who created C#?
 Microsoft
-What is C# used for?
+Who created C#?
 Development
+What is C# used for?
+C-like
 What is the syntax of C#?
-C-like
-What is the latest version of C#?
 10
+What is the latest version of C#?
+Yes
 Is C# an object-oriented language?
-Yes
-What is the Common Language Runtime (CLR)?
 Environment
-What is a namespace in C#?
+What is the Common Language Runtime (CLR)?
 Scope
-What is a delegate in C#?
+What is a namespace in C#?
 Type
-What is C++?
+What is a delegate in C#?
 Language
-What is C++ used for?
+What is C++?
 Programming
-What is the syntax of C++?
+What is C++ used for?
 C-like
-Is C++ an object-oriented language?
+What is the syntax of C++?
 Yes
-What is the difference between C and C++?
+Is C++ an object-oriented language?
 Classes
-What is a pointer in C++?
+What is the difference between C and C++?
 Address
-What is a class in C++?
+What is a pointer in C++?
 Blueprint
-What is an object in C++?
+What is a class in C++?
 Instance
-What is a template in C++?
+What is an object in C++?
 Generic
+What is a template in C++?
+

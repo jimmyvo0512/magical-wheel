@@ -46,18 +46,18 @@ int main() {
   }
 
   while (true) {
-    cout << "> ";
-    string message;
-    getline(cin, message);
-
-    if (message.empty()) {
-      continue;
-    }
-
-    if (!socket.send(message.c_str(), message.length())) {
-      cerr << "Failed to send message to server" << endl;
-      break;
-    }
+    // cout << "> ";
+    // string message;
+    // getline(cin, message);
+    //
+    // if (message.empty()) {
+    //   continue;
+    // }
+    //
+    // if (!socket.send(message.c_str(), message.length())) {
+    //   cerr << "Failed to send message to server" << endl;
+    //   break;
+    // }
 
     char buffer[1024];
     int received_bytes = socket.receive(buffer, sizeof(buffer));

@@ -43,6 +43,7 @@ private:
 
   // Game State
   bool is_started;
+  int turn;
 
   vector<pair<string, string> > m_questions_and_answers;
 

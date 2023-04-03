@@ -59,10 +59,8 @@ void *handle_client(void *wrapped_processor) {
     switch (buffer[0]) {
     case 0x01: { // Registration
       string name = readRegisterBuffer(buffer);
-      cout << "readname: " << name << endl;
-      game->client_register(client, name);
-
       cout << "Receive registration event, name: " << name << endl;
+      game->client_register(client, name);
       break;
     }
     default:

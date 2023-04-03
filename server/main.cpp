@@ -13,8 +13,9 @@ using namespace std;
 
 int main() {
   try {
-    Game game("../questions.txt", 8080);
-    game.start();
+    Game *game = new Game("./questions.txt", 8080);
+    game->start();
+    delete game;
   } catch (const char *e) {
     cerr << "Error: " << e << endl;
   }
