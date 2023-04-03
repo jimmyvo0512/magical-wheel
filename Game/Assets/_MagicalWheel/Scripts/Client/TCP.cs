@@ -1,6 +1,6 @@
 public enum ClientType
 {
-    Register = 0,
+    Register = 1,
     Answer,
 }
 
@@ -8,24 +8,25 @@ public class TCP
 {
     public static void Register(string playerName)
     {
-        var tcp = new TCPEncoder();
-        tcp.AddInt((int)ClientType.Register);
-        tcp.AddString(playerName);
+        var encoder = new TCPEncoder();
+        encoder.AddInt8((sbyte)ClientType.Register);
+        encoder.AddString(playerName);
 
-        Send(tcp);
+        Send(encoder);
     }
 
-    public static void Answer(string answer)
+    public static void Answer(char character, string keyword)
     {
-        var tcp = new TCPEncoder();
-        tcp.AddInt((int)ClientType.Answer);
-        tcp.AddString(answer);
+        var encoder = new TCPEncoder();
+        encoder.AddChar(character);
+        encoder.AddInt8((sbyte)ClientType.Answer);
+        encoder.AddString(keyword);
 
-        Send(tcp);
+        Send(encoder);
     }
 
-    private static void Send(TCPEncoder tcp)
+    private static void Send(TCPEncoder encoder)
     {
-        TCPManager.Instance.Send(tcp.ToArray());
+        TCPManager.Instance.Send(encoder.ToArray());
     }
 }

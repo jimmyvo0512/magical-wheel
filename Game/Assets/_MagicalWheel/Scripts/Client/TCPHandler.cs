@@ -3,7 +3,7 @@ using UnityEngine;
 
 public enum ServerType
 {
-    ResponseRegistration = 0,
+    ResponseRegistration = 1,
     InformNewPlayer,
     SendGameQuestion,
     Turn,
