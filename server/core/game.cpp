@@ -14,7 +14,10 @@ void Game::start() {
   int rc = pthread_create(&listen_to_connection_thread, NULL,
                           handle_socket_connection, (void *)this);
   while (true) {
-    // cout << "Waiting for players" << endl;
+    if (!this->is_started)
+      break;
+
+    this->broadcast("Game started");
   }
 }
 
@@ -39,6 +42,29 @@ void Game::listen_to_connection() {
     ThreadProcessor processor = ThreadProcessor(this, client);
     int rc = pthread_create(&thread, NULL, handle_client, (void *)&processor);
     m_threads.insert(make_pair(player_id, thread));
+  }
+}
+
+void Game::client_register(Client *client, string name) {
+  cout << "hea" << client->get_id() << endl;
+  try {
+    // m_mutex.lock();
+    client->client_register(name);
+    cout << "healsda" << endl;
+    if (this->is_started) {
+      this->m_waiting_pool.push_back(client);
+    } else {
+      this->m_playing_pool.push_back(client);
+    }
+
+    if (this->m_playing_pool.size() == 3) {
+      this->is_started = true;
+    }
+    // m_mutex.unlock();
+
+    this->broadcast(name + " joined");
+  } catch (const char *e) {
+    cout << "Error: Client register failed. Err: " << e << endl;
   }
 }
 
@@ -95,7 +121,7 @@ void Game::send_game_over_message() {
 }
 
 void Game::broadcast(const string &event) {
-  lock_guard<mutex> lock(m_clientMutex);
+  // lock_guard<mutex> lock(m_clientMutex);
   for (auto &client : m_clients) {
     client.second->sendEvent(event);
   }

@@ -12,10 +12,9 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
-#include "client.h"
 #include <cstdlib>
-#include <pthread.h>
 #include <utility>
+#include <mutex>
 
 using namespace std;
 
@@ -28,17 +27,22 @@ public:
   Game(string filename, int port);
   void start();
   void listen_to_connection();
+  void client_register(Client* client, string name);
 
 private:
+  mutex m_mutex;
   Socket m_server_socket;
   map<int, Client *> m_clients;
   
-  map<int, Client*> m_playing_pool;
-  map<int, Client*> m_waiting_pool;
+  vector<Client*> m_playing_pool;
+  vector<Client*> m_waiting_pool;
   
   map<int, pthread_t> m_threads;
 
   mutex m_clientMutex;
+
+  // Game State
+  bool is_started;
 
   vector<pair<string, string> > m_questions_and_answers;
 

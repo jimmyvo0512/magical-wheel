@@ -1,5 +1,4 @@
 #include "core/socket.h"
-#include <cstring>
 #include <iomanip>
 #include <iostream>
 
@@ -29,14 +28,11 @@ int main() {
   }
 
   cout << "Connected to server" << endl;
-  string name = "Tennayne";
 
+  cout << "Input name: ";
+  string name;
+  getline(cin, name);
   char *registration_message = generateCharArray(name);
-  // char *cp = new char[10];
-  // memcpy(cp, &registration_message[5],
-  //        9); // copy the string into the char array
-  //
-  // cout << "this is registration message: " << cp << endl;
   cout << "Buffer ";
   for (int i = 0; i < name.length() + 5; i++) {
     cout << setw(2) << setfill('0') << hex << (int)registration_message[i]
