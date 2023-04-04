@@ -15,6 +15,7 @@ public:
   char *generate_player_joined(string name);
   char *generate_question(int answer_length, string desc);
   char *generate_player_turn(int turn_id, string name);
+  char *generate_answer_response();
 
   // Read message
   string read_register(char *buffer);

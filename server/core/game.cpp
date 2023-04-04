@@ -107,6 +107,7 @@ void Game::validate_guess(char letter, string keyword) {
   // Check letter
   if (is_contain(this->keyword, letter) && !is_contain(this->guested, letter)) {
     // Emit Greate guess
+
   } else {
     // Emit Failed guess
   }

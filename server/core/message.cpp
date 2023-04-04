@@ -45,7 +45,7 @@ char *Message::generate_player_turn(int turn_id, string name) {
   return result;
 }
 
-char *generate_answer_response() {
+char *Message::generate_answer_response() {
   char *result = new char[1];
   result[0] = 0x05;
   return result;
