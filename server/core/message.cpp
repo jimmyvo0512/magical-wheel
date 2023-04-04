@@ -48,17 +48,36 @@ char *Message::generate_player_turn(int turn_id, string name) {
 }
 
 char *Message::generate_answer_response(int turn_id, vector<Client *> clients) {
-  int length = 1 + 4 + 4;
-  for (auto client : clients) {
-    length += 4 + client->get_name().length() + 4;
-  }
+  int length = 1 + 4 + 4 + get_score_board_length(clients);
 
   Encoder ecd = Encoder(length, 0x05);
 
   ecd.add(&turn_id, sizeof(turn_id));
-  ecd.addScoreBoard(clients);
+  ecd.add_score_board(clients);
 
   return ecd.get_buffer();
+}
+
+char *Message ::generate_end_game(string result_keyword,
+                                  vector<Client *> clients) {
+  int length =
+      1 + 4 + result_keyword.length() + 4 + get_score_board_length(clients);
+
+  Encoder ecd = Encoder(length, 0x06);
+
+  ecd.addStr(result_keyword);
+  ecd.add_score_board(clients);
+
+  return ecd.get_buffer();
+}
+
+int get_score_board_length(vector<Client *> clients) {
+  int length = 0;
+  for (auto client : clients) {
+    length += 4 + client->get_name().length() + 4;
+  }
+
+  return length;
 }
 
 string Message::read_register(char *buffer) {

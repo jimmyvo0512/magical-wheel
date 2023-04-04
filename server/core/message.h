@@ -18,6 +18,7 @@ public:
   char *generate_question(int answer_length, string desc);
   char *generate_player_turn(int turn_id, string name);
   char *generate_answer_response(int turn_id, vector<Client *> clients);
+  char *generate_end_game(string result_keyword, vector<Client *> clients);
 
   // Read message
   string read_register(char *buffer);

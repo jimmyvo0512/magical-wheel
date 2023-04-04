@@ -19,7 +19,8 @@ public:
   char *get_buffer();
 
   void add(const void *__restrict__ ptr, size_t size);
-  void addScoreBoard(vector<Client *>);
+  void addStr(string str);
+  void add_score_board(vector<Client *>);
 
 private:
   char *buffer;
