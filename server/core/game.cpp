@@ -1,9 +1,12 @@
 #include "game.h"
+#include "Message.h"
 #include "client.h"
 #include "message.h"
 #include "thread_handler.h"
 #include "thread_processor.h"
 #include <cstdlib>
+
+bool is_contain(string s, char c) { return s.find(c) != std::string::npos; }
 
 Game::Game(string filename, int port)
     : m_random_engine(chrono::system_clock::now().time_since_epoch().count()) {
@@ -25,7 +28,9 @@ void Game::start() {
     if (turn == 0) {
       sleep(5);
       cout << "Broadcast Start game" << endl;
-      this->broadcast_playing_pool("Game started");
+      string first_player_name = this->m_playing_pool[0]->get_name();
+      this->broadcast_playing_pool(
+          Message::get_instance().generate_player_turn(1, first_player_name));
       turn += 1;
     }
   }
@@ -88,6 +93,22 @@ void Game::client_register(Client *client, string name) {
     default:
       break;
     }
+  }
+}
+void Game::validate_guess(char letter, string keyword) {
+
+  if (this->turn > 2) {
+    // Check keyword
+    if (keyword == this->keyword) {
+      // Emit end game
+      return;
+    }
+  }
+  // Check letter
+  if (is_contain(this->keyword, letter) && !is_contain(this->guested, letter)) {
+    // Emit Greate guess
+  } else {
+    // Emit Failed guess
   }
 }
 

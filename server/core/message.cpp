@@ -1,5 +1,6 @@
 #include "Message.h"
 #include <iostream>
+#include <utility>
 
 // Initialize the singleton instance pointer to null
 Message *Message::instance = nullptr;
@@ -48,4 +49,32 @@ char *generate_answer_response() {
   char *result = new char[1];
   result[0] = 0x05;
   return result;
+}
+
+string Message::read_register(char *buffer) {
+  int len_name;
+  memcpy(&len_name, &buffer[1], 4);
+  char *name = new char[len_name + 1];
+  memcpy(name, &buffer[5], len_name);
+  name[len_name] = '\0';
+
+  string result = name;
+  delete[] name;
+
+  return result;
+}
+
+pair<char, string> Message::read_answer(char *buffer) {
+  int len_keyword;
+  char letter;
+  memcpy(&letter, &buffer[1], 1);      // read the length from the char array
+  memcpy(&len_keyword, &buffer[2], 4); // read the length from the char array
+  char *name = new char[len_keyword + 1];
+  memcpy(name, &buffer[5], len_keyword);
+  name[len_keyword] = '\0';
+
+  string keyword = name;
+  delete[] name; // free the memory allocated for the string
+
+  return make_pair(letter, keyword);
 }

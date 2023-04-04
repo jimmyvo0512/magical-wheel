@@ -25,9 +25,12 @@ using namespace std;
 class Game {
 public:
   Game(string filename, int port);
+
   void start();
   void listen_to_connection();
+
   void client_register(Client *client, string name);
+  void validate_guess(char letter, string keyword);
 
 private:
   mutex m_mutex;
@@ -44,8 +47,10 @@ private:
   // Game State
   bool is_started;
   int turn;
+  string keyword;
+  string guested;
 
-  vector<pair<string, string> > m_questions_and_answers;
+  vector<pair<string, string>> m_questions_and_answers;
 
   default_random_engine m_random_engine;
 
