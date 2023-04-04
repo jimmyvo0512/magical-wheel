@@ -1,7 +1,9 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
+#include "client.h"
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -17,6 +19,7 @@ public:
   char *get_buffer();
 
   void add(const void *__restrict__ ptr, size_t size);
+  void addScoreBoard(vector<Client *>);
 
 private:
   char *buffer;

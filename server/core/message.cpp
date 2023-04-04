@@ -56,19 +56,7 @@ char *Message::generate_answer_response(int turn_id, vector<Client *> clients) {
   Encoder ecd = Encoder(length, 0x05);
 
   ecd.add(&turn_id, sizeof(turn_id));
-
-  int client_cnt = clients.size();
-  ecd.add(&client_cnt, sizeof(client_cnt));
-
-  for (auto client : clients) {
-    int name_len = client->get_name().length();
-    ecd.add(&name_len, sizeof(name_len));
-
-    ecd.add(client->get_name().c_str(), name_len);
-
-    int point = client->get_points();
-    ecd.add(&point, sizeof(point));
-  }
+  ecd.addScoreBoard(clients);
 
   return ecd.get_buffer();
 }
