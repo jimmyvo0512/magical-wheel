@@ -10,7 +10,7 @@ public enum ServerType
     EndGame,
 }
 
-public class TCPHandler
+public class TCPReceiver
 {
     public static void HandleData(byte[] data)
     {

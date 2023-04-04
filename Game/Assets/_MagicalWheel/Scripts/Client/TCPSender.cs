@@ -4,7 +4,7 @@ public enum ClientType
     Answer,
 }
 
-public class TCP
+public class TCPSender
 {
     public static void Register(string playerName)
     {

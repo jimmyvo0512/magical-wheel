@@ -102,7 +102,7 @@ public class TCPSocket
             var data = new byte[len];
             Array.Copy(rcvBuffer, data, len);
 
-            TCPHandler.HandleData(data);
+            TCPReceiver.HandleData(data);
 
             BeginReceive();
         }
