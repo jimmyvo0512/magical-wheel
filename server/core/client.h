@@ -6,6 +6,8 @@
 
 using namespace std;
 
+enum NameError { NAME_ALREADY_SET, INVALID_NAME };
+
 class Client {
 public:
   Client(int id, Socket socket);

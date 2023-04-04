@@ -1,4 +1,6 @@
 #include "game.h"
+#include "client.h"
+#include "message.h"
 #include "thread_handler.h"
 #include "thread_processor.h"
 #include <cstdlib>
@@ -19,12 +21,11 @@ void Game::start() {
   while (true) {
     if (!this->is_started)
       continue;
-    // cout << "Start game" << endl;
 
     if (turn == 0) {
       sleep(5);
       cout << "Broadcast Start game" << endl;
-      this->broadcast("Game started");
+      this->broadcast_playing_pool("Game started");
       turn += 1;
     }
   }
@@ -56,7 +57,7 @@ void Game::listen_to_connection() {
 
 void Game::client_register(Client *client, string name) {
   try {
-    // m_mutex.lock();
+    // TODO: Check is this name already exists or not
     client->client_register(name);
     if (this->is_started) {
       this->m_waiting_pool.push_back(client);
@@ -69,16 +70,24 @@ void Game::client_register(Client *client, string name) {
     }
     cout << " ==> Playing pool length: " << this->m_playing_pool.size() << endl;
 
-    // m_mutex.unlock();
-
-    this->broadcast(name + " joined");
+    this->broadcast_playing_pool(
+        Message::get_instance().generate_player_joined(name));
 
     if (this->m_playing_pool.size() == 2) {
       this->is_started = true;
       this->turn = 0;
     }
-  } catch (const char *e) {
+  } catch (NameError e) {
     cout << "Error: Client register failed. Err: " << e << endl;
+    switch (e) {
+    case INVALID_NAME: {
+      char message[2] = {0x01, 0x01};
+      client->sendEvent(message);
+      break;
+    }
+    default:
+      break;
+    }
   }
 }
 
@@ -133,19 +142,10 @@ void Game::send_question_to_player(Client &client) {
 
 void Game::send_game_over_message() {
   string message = "Game over\n";
-  broadcast(message);
+  broadcast_playing_pool(message);
 }
 
-void Game::broadcast(const string &event) {
-  // lock_guard<mutex> lock(m_clientMutex);
-  // for (auto &client : m_clients) {
-  //   client.second->sendEvent(event);
-  // }
-  // for (std::map<int, Client *>::iterator it = .begin();
-  //      it != m_clients.end(); it++) {
-  //   cout << "HERE PRINT" << it->first << ": " << it->second->get_name() <<
-  //   endl; it->second->sendEvent(event); it++;
-  // }
+void Game::broadcast_playing_pool(const string &event) {
   for (auto &client : m_playing_pool) {
     cout << "HERE PRINT: " << client->get_name() << " " << event;
     client->sendEvent(event);

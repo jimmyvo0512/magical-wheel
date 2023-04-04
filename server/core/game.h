@@ -4,17 +4,17 @@
 #include "client.h"
 #include "socket.h"
 #include <chrono>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <pthread.h>
 #include <random>
 #include <stdlib.h>
 #include <string>
-#include <vector>
-#include <cstdlib>
 #include <utility>
-#include <mutex>
+#include <vector>
 
 using namespace std;
 
@@ -27,16 +27,16 @@ public:
   Game(string filename, int port);
   void start();
   void listen_to_connection();
-  void client_register(Client* client, string name);
+  void client_register(Client *client, string name);
 
 private:
   mutex m_mutex;
   Socket m_server_socket;
   map<int, Client *> m_clients;
-  
-  vector<Client*> m_playing_pool;
-  vector<Client*> m_waiting_pool;
-  
+
+  vector<Client *> m_playing_pool;
+  vector<Client *> m_waiting_pool;
+
   map<int, pthread_t> m_threads;
 
   mutex m_clientMutex;
@@ -55,7 +55,7 @@ private:
   void send_question_to_player(Client &client);
   void send_game_over_message();
 
-  void broadcast(const string &event);
+  void broadcast_playing_pool(const string &event);
 };
 
 #endif
