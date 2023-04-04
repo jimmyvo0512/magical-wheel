@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using UnityEngine;
 
 public class TCPSocket
 {
@@ -32,7 +33,7 @@ public class TCPSocket
                 SendBufferSize = DATA_SIZE,
             };
             socket.Client.Blocking = false;
-            socket.BeginConnect(IPAddress.Any, 7777, ConnectedCallback, socket);
+            socket.BeginConnect(IPAddress.Parse("127.0.0.1"), 7777, ConnectedCallback, socket);
         }
         catch (Exception err)
         {
@@ -76,6 +77,8 @@ public class TCPSocket
                 throw new Exception("Socket hasn't connected yet!");
             }
 
+            Debug.Log("Connected to server!");
+
             BeginReceive();
         }
         catch (Exception err)
@@ -99,7 +102,7 @@ public class TCPSocket
             var data = new byte[len];
             Array.Copy(rcvBuffer, data, len);
 
-            TCPHandler.HandleData(data);
+            TCPReceiver.HandleData(data);
 
             BeginReceive();
         }

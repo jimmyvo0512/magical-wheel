@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class TCPManager : Singleton<TCPManager>
+public class TCPMgr : Singleton<TCPMgr>
 {
     TCPSocket socket;
 
@@ -21,8 +21,8 @@ public class TCPManager : Singleton<TCPManager>
     {
         try
         {
+            Debug.Log("Start connecting to server...");
             socket.Connect();
-            Debug.Log("Connected to server!");
         }
         catch (Exception err)
         {

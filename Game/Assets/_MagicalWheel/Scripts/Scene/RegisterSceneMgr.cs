@@ -23,7 +23,7 @@ public class RegisterSceneMgr : MonoBehaviour
 
     private void SubmitName()
     {
-        TCP.Register(nameInputField.text);
+        GameMgr.Instance.Register(nameInputField.text);
         SetCanSubmit(false);
     }
 

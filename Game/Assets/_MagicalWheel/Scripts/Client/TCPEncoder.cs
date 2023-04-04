@@ -14,8 +14,10 @@ public class TCPEncoder
     public byte[] ToArray() => buffer.ToArray();
 
     public void AddInt(int n) => buffer.AddRange(BitConverter.GetBytes(n));
+    public void AddInt8(sbyte n) => buffer.AddRange(BitConverter.GetBytes(n));
     public void AddFloat(float f) => buffer.AddRange(BitConverter.GetBytes(f));
     public void AddBool(bool b) => buffer.AddRange(BitConverter.GetBytes(b));
+    public void AddChar(char c) => buffer.AddRange(BitConverter.GetBytes(c));
     public void AddString(string str)
     {
         AddInt(str.Length);
