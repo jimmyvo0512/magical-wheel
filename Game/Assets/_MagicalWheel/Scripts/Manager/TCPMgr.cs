@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class TCPManager : Singleton<TCPManager>
+public class TCPMgr : Singleton<TCPMgr>
 {
     TCPSocket socket;
 

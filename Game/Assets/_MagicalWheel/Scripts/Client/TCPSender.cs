@@ -27,6 +27,6 @@ public class TCPSender
 
     private static void Send(TCPEncoder encoder)
     {
-        TCPManager.Instance.Send(encoder.ToArray());
+        TCPMgr.Instance.Send(encoder.ToArray());
     }
 }
