@@ -1,4 +1,5 @@
 #include "message.h"
+#include "encoder.h"
 #include <cstring>
 #include <iostream>
 #include <utility>
@@ -46,10 +47,30 @@ char *Message::generate_player_turn(int turn_id, string name) {
   return result;
 }
 
-char *Message::generate_answer_response() {
-  char *result = new char[1];
-  result[0] = 0x05;
-  return result;
+char *Message::generate_answer_response(int turn_id, vector<Client *> clients) {
+  int length = 1 + 4 + 4;
+  for (auto client : clients) {
+    length += 4 + client->get_name().length() + 4;
+  }
+
+  Encoder ecd = Encoder(length, 0x05);
+
+  ecd.add(&turn_id, sizeof(turn_id));
+
+  int client_cnt = clients.size();
+  ecd.add(&client_cnt, sizeof(client_cnt));
+
+  for (auto client : clients) {
+    int name_len = client->get_name().length();
+    ecd.add(&name_len, sizeof(name_len));
+
+    ecd.add(client->get_name().c_str(), name_len);
+
+    int point = client->get_points();
+    ecd.add(&point, sizeof(point));
+  }
+
+  return ecd.get_buffer();
 }
 
 string Message::read_register(char *buffer) {

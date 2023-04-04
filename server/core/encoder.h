@@ -7,9 +7,11 @@ using namespace std;
 
 class Encoder {
 public:
-  Encoder(int length) {
+  Encoder(int length, char message_type) {
     buffer = new char[length];
-    seek_pos = 0;
+    buffer[0] = message_type;
+
+    seek_pos = 1;
   }
 
   char *get_buffer();
