@@ -1,4 +1,5 @@
-#include "Message.h"
+#include "message.h"
+#include <cstring>
 #include <iostream>
 #include <utility>
 
