@@ -3,11 +3,19 @@ using UnityEngine;
 
 public enum ServerType
 {
-    ResponseRegistration = 1,
-    InformNewPlayer,
-    SendGameQuestion,
-    Turn,
+    RegisterResp = 1,
+    NewPlayerInform,
+    StartGame,
+    PlayerTurn,
+    CorrectChar,
     EndGame,
+}
+
+public enum RegisterResp
+{
+    OK = 1,
+    Invalid,
+    AlreadyExist,
 }
 
 public class TCPReceiver
@@ -23,20 +31,23 @@ public class TCPReceiver
 
             switch (svType)
             {
-                case ServerType.ResponseRegistration:
-                    ResponseRegistration(decoder);
+                case ServerType.RegisterResp:
+                    ReceiveRegisterResp(decoder);
                     return;
-                case ServerType.InformNewPlayer:
-                    InformNewPlayer(decoder);
+                case ServerType.NewPlayerInform:
+                    ReceiveNewPlayerInform(decoder);
                     return;
-                case ServerType.SendGameQuestion:
-                    SendGameQuestion(decoder);
+                case ServerType.StartGame:
+                    ReceiveStartGame(decoder);
                     return;
-                case ServerType.Turn:
-                    Turn(decoder);
+                case ServerType.PlayerTurn:
+                    ReceivePlayerTurn(decoder);
+                    return;
+                case ServerType.CorrectChar:
+                    ReceiveCorrectChar(decoder);
                     return;
                 case ServerType.EndGame:
-                    EndGame(decoder);
+                    ReceiveEndGame(decoder);
                     return;
                 default:
                     throw new Exception("Unexpected server type: " + svType.ToString());
@@ -48,34 +59,48 @@ public class TCPReceiver
         }
     }
 
-    private static void ResponseRegistration(TCPDecoder decoder)
+    private static void ReceiveRegisterResp(TCPDecoder decoder)
     {
-        var ok = decoder.GetBool();
-        var playerOrErr = decoder.GetString();
-        GameMgr.Instance.ResponseRegistration(ok, playerOrErr);
+        var resp = decoder.GetInt8();
+        GameMgr.Instance.HandleRegisterResp((RegisterResp)resp);
     }
 
-    private static void InformNewPlayer(TCPDecoder decoder)
+    private static void ReceiveNewPlayerInform(TCPDecoder decoder)
     {
-        var player = decoder.GetString();
-        GameMgr.Instance.InformNewPlayer(player);
+        var playerName = decoder.GetString();
+        GameMgr.Instance.HandleNewPlayerInform(playerName);
     }
 
-    private static void SendGameQuestion(TCPDecoder decoder)
+    private static void ReceiveStartGame(TCPDecoder decoder)
     {
-        var question = decoder.GetString();
         var answerLen = decoder.GetInt();
-        GameMgr.Instance.SendGameQuestion(question, answerLen);
+        var question = decoder.GetString();
+        var playerName = decoder.GetString();
+
+        GameMgr.Instance.HandleStartGame(question, answerLen, playerName);
     }
 
-    private static void Turn(TCPDecoder decoder)
+    private static void ReceivePlayerTurn(TCPDecoder decoder)
     {
-        var player = decoder.GetString();
-        GameMgr.Instance.Turn(player);
+        var turn = decoder.GetInt();
+        var playerName = decoder.GetString();
+
+        GameMgr.Instance.HandlePlayerTurn(turn, playerName);
     }
 
-    private static void EndGame(TCPDecoder decoder)
+    private static void ReceiveCorrectChar(TCPDecoder decoder)
     {
+        var scoreBoard = decoder.GetScoreBoard();
+        var playerName = decoder.GetString();
 
+        GameMgr.Instance.HandleCorrectChar(scoreBoard, playerName);
+    }
+
+    private static void ReceiveEndGame(TCPDecoder decoder)
+    {
+        var resKeyword = decoder.GetString();
+        var scoreBoard = decoder.GetScoreBoard();
+
+        GameMgr.Instance.HandleEndGame(resKeyword, scoreBoard);
     }
 }

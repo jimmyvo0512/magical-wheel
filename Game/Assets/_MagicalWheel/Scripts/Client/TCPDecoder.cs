@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 public class TCPDecoder
@@ -12,32 +13,36 @@ public class TCPDecoder
         seekPos = 0;
     }
 
-    public int GetInt()
+
+    public Dictionary<string, int> GetScoreBoard()
     {
-        var res = BitConverter.ToInt32(buffer, seekPos);
-        seekPos += sizeof(int);
+        var playerCnt = GetInt();
+
+        var res = new Dictionary<string, int>();
+        for (var i = 0; i < playerCnt; i++)
+        {
+            var playerName = GetString();
+            var score = GetInt();
+
+            res[playerName] = score;
+        }
+
         return res;
     }
 
-    public float GetFloat()
-    {
-        var res = BitConverter.ToSingle(buffer, seekPos);
-        seekPos += sizeof(float);
-        return res;
-    }
-
-    public bool GetBool()
-    {
-        var res = BitConverter.ToBoolean(buffer, seekPos);
-        seekPos += sizeof(bool);
-        return res;
-    }
-
+    public int GetInt() => BitConverter.ToInt32(buffer, MoveSeekPos(sizeof(int)));
+    public sbyte GetInt8() => (sbyte)buffer[MoveSeekPos(sizeof(sbyte))];
+    public float GetFloat() => BitConverter.ToSingle(buffer, MoveSeekPos(sizeof(float)));
+    public bool GetBool() => BitConverter.ToBoolean(buffer, MoveSeekPos(sizeof(bool)));
     public string GetString()
     {
         var len = GetInt();
-        var res = Encoding.ASCII.GetString(buffer, seekPos, len);
-        seekPos += len;
-        return res;
+        return Encoding.ASCII.GetString(buffer, MoveSeekPos(len), len);
+    }
+
+    public int MoveSeekPos(int size)
+    {
+        seekPos += size;
+        return seekPos - size;
     }
 }

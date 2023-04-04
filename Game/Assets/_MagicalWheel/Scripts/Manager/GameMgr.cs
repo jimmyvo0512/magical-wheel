@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
@@ -5,30 +6,37 @@ public class GameMgr : Singleton<GameMgr>
 {
     string playerName;
 
+    public void Register(string playerName)
+    {
+        this.playerName = playerName;
+        TCPSender.Register(this.playerName);
+    }
+
     public void Connect(bool ok)
     {
         var status = ok ? "Connected to server!" : "Can't find server!";
         FindObjectOfType<RegisterSceneMgr>().SetStatus(status, ok);
     }
 
-    public void ResponseRegistration(bool ok, string playerNameOrErr)
+    public void HandleRegisterResp(RegisterResp resp)
     {
-        if (ok)
+        switch (resp)
         {
-            playerName = playerNameOrErr;
+            case RegisterResp.OK:
+            case RegisterResp.Invalid:
+            case RegisterResp.AlreadyExist:
+            default:
+                break;
         }
-
-        var status = ok ? "Register done! Pls wait for other players..." : playerNameOrErr;
-        FindObjectOfType<RegisterSceneMgr>().SetStatus(status, !ok);
     }
 
-    public void InformNewPlayer(string playerName)
+    public void HandleNewPlayerInform(string playerName)
     {
         var status = "Player " + playerName + " just joined!";
         FindObjectOfType<RegisterSceneMgr>().SetStatus(status, false);
     }
 
-    public void SendGameQuestion(string question, int answerLen)
+    public void HandleStartGame(string question, int answerLen, string playerName)
     {
         if (SceneManager.GetActiveScene().name != "Game")
         {
@@ -44,12 +52,17 @@ public class GameMgr : Singleton<GameMgr>
         FindObjectOfType<GameSceneMgr>().SetQuestion(question, answerLen);
     }
 
-    public void Turn(string playerName)
+    public void HandlePlayerTurn(int turn, string playerName)
     {
         FindObjectOfType<GameSceneMgr>().SetTurn(playerName == this.playerName);
     }
 
-    public void EndGame()
+    public void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName)
+    {
+
+    }
+
+    public void HandleEndGame(string resultKeyword, Dictionary<string, int> scoreBoard)
     {
         if (SceneManager.GetActiveScene().name != "Rank")
         {
