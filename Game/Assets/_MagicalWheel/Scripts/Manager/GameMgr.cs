@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum GameState
 {
@@ -13,6 +14,7 @@ public enum GameState
 public class GameMgr : Singleton<GameMgr>
 {
     [SerializeField] GameObject endGame;
+    [SerializeField] Button back;
 
     string playerName;
 
@@ -26,7 +28,10 @@ public class GameMgr : Singleton<GameMgr>
 
     protected override void Awake()
     {
+        base.Awake();
+
         SetState(GameState.Register);
+        back.onClick.AddListener(() => SetState(GameState.Register));
     }
 
     public void Register(string playerName)
