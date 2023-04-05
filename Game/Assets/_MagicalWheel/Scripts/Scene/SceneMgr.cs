@@ -13,7 +13,24 @@ public class SceneMgr : MonoBehaviour
         master.SetActive(enable);
     }
 
-    public void SetStatus(string status)
+    public virtual void HandleConnecting(bool connected)
+    {
+        var status = connected ? "Connected to server!" : "Cannot connect to server!";
+        SetStatus(status);
+    }
+
+    public virtual void HandleRegisterResp(bool ok, string err = null)
+    {
+        var status = ok ? "Register done! Please wait for other players" : ("Failed to register: " + err + "!");
+        SetStatus(status);
+    }
+
+    public virtual void HandleNewPlayerInform(string playerName)
+    {
+        SetStatus(playerName + " just joined!");
+    }
+
+    protected void SetStatus(string status)
     {
         if (this.status == null)
         {

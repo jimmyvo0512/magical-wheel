@@ -8,6 +8,13 @@ public class GameSceneMgr : SceneMgr
     [SerializeField] TMP_InputField character, keyword;
     [SerializeField] Button submit;
 
+    bool inTurn = false;
+
+    private void Awake()
+    {
+        submit.onClick.AddListener(Submit);
+    }
+
     public static GameSceneMgr Get()
     {
         return FindObjectOfType<GameSceneMgr>();
@@ -23,12 +30,17 @@ public class GameSceneMgr : SceneMgr
     {
         turn.text = "Turn " + turnId.ToString() + ": " + playerName + " is in turn!";
 
-        var inTurn = playerName == GameMgr.Instance.PlayerName;
+        inTurn = playerName == GameMgr.Instance.PlayerName;
         character.interactable = keyword.interactable = submit.interactable = inTurn;
     }
 
     public void HandleCorrectChar(string playerName)
     {
         HandlePlayerTurn(0, playerName);
+    }
+
+    private void Submit()
+    {
+        GameMgr.Instance.Answer(character.text[0], keyword.text);
     }
 }

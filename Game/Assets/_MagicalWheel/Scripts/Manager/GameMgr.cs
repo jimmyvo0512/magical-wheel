@@ -14,6 +14,11 @@ public class GameMgr : Singleton<GameMgr>
         TCPSender.Register(this.playerName);
     }
 
+    public void Answer(char character, string keyword)
+    {
+        TCPSender.Answer(character, keyword);
+    }
+
     public void HandleConnecting(bool ok)
     {
     }
