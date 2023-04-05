@@ -45,12 +45,15 @@ private:
   mutex m_clientMutex;
 
   // Game State
-  bool is_started;
-  int turn;
-  string keyword;
-  string guested;
+  int num_player;
+  bool m_is_started;
+  int m_turn;
+  int m_num_guess_in_turn;
+  int m_cur_player_index;
+  string m_keyword;
+  string m_guessed;
 
-  vector<pair<string, string>> m_questions_and_answers;
+  vector<pair<string, string> > m_questions_and_answers;
 
   default_random_engine m_random_engine;
 
@@ -58,9 +61,13 @@ private:
   int start_socket();
   // void *handle_client(void* data);
   void send_question_to_player(Client &client);
+  pair<int, string> generate_question();
+
   void send_game_over_message();
 
   void broadcast_playing_pool(const string &event);
+
+  Client* get_cur_player();
 };
 
 #endif

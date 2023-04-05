@@ -4,37 +4,54 @@
 #include "thread_handler.h"
 #include "thread_processor.h"
 #include <cstdlib>
+#include <utility>
 
 bool is_contain(string s, char c) { return s.find(c) != std::string::npos; }
 
 Game::Game(string filename, int port)
     : m_random_engine(chrono::system_clock::now().time_since_epoch().count()) {
-  this->is_started = false;
-  turn = 0;
+  m_is_started = false;
+  m_turn = 0;
   load_questions_and_answers(filename);
   if (start_socket() == 1)
     throw "Failed to start socket";
 }
 
 void Game::start() {
+  // Listening to client connection
   pthread_t listen_to_connection_thread;
   int rc = pthread_create(&listen_to_connection_thread, NULL,
                           handle_socket_connection, (void *)this);
+
+  // Maintain game logic
   while (true) {
-    if (!this->is_started)
+    if (!m_is_started)
       continue;
 
-    if (turn == 0) {
-      sleep(5);
+    if (m_turn == 0) {
+      sleep(1);
       cout << "Broadcast Start game" << endl;
       string first_player_name = this->m_playing_pool[0]->get_name();
-      this->broadcast_playing_pool(
-          Message::get_instance().generate_player_turn(1, first_player_name));
-      turn += 1;
+
+      pair<int, string> question = generate_question();
+      this->broadcast_playing_pool(Message::get_instance().generate_question(
+          1, question.first, question.second, first_player_name));
+
+      m_turn += 1;
+      m_num_guess_in_turn = 0;
+    }
+
+    if (m_num_guess_in_turn >= m_playing_pool.size()) {
+      // Moving to next turn stem from no right guesses
+      m_turn += 1;
+      m_num_guess_in_turn = 0;
     }
   }
 }
 
+// Listen to client connection
+//  - If game do not start, client will be put into playing pool
+//  - If game started, client would be put into waiting pool
 void Game::listen_to_connection() {
   while (true) {
     cout << "Relisten" << endl;
@@ -59,11 +76,13 @@ void Game::listen_to_connection() {
   }
 }
 
+// Handle register action
 void Game::client_register(Client *client, string name) {
   try {
     // TODO: Check is this name already exists or not
+
     client->client_register(name);
-    if (this->is_started) {
+    if (m_is_started) {
       this->m_waiting_pool.push_back(client);
       cout << " - Add client " << client->get_name() << " to waiting pool"
            << endl;
@@ -78,8 +97,8 @@ void Game::client_register(Client *client, string name) {
         Message::get_instance().generate_player_joined(name));
 
     if (this->m_playing_pool.size() == 2) {
-      this->is_started = true;
-      this->turn = 0;
+      m_is_started = true;
+      m_turn = 0;
     }
   } catch (NameError e) {
     cout << "Error: Client register failed. Err: " << e << endl;
@@ -95,20 +114,39 @@ void Game::client_register(Client *client, string name) {
   }
 }
 void Game::validate_guess(char letter, string keyword) {
-
-  if (this->turn > 2) {
+  if (this->m_turn > 2) {
     // Check keyword
-    if (keyword == this->keyword) {
+    if (keyword == this->m_keyword) {
       // Emit end game
+      this->get_cur_player()->add_points(5);
+      this->broadcast_playing_pool(Message::get_instance().generate_end_game(
+          keyword, this->m_playing_pool));
       return;
     }
   }
   // Check letter
-  if (is_contain(this->keyword, letter) && !is_contain(this->guested, letter)) {
+  if (is_contain(this->m_keyword, letter) &&
+      !is_contain(this->m_guessed, letter)) { // True
+    this->get_cur_player()->add_points(1);
     // Emit Greate guess
-
+    for (int i = 0; i < m_keyword.length(); i++) {
+      if (m_keyword[i] == letter) {
+        m_guessed[i] = letter;
+      }
+    }
+    m_cur_player_index += 1;
+    this->broadcast_playing_pool(
+        Message::get_instance().generate_answer_response(
+            m_turn, m_guessed, m_playing_pool, this->get_cur_player()));
+    m_turn += 1;
+    m_cur_player_index += 1;
+    m_num_guess_in_turn = 0;
   } else {
     // Emit Failed guess
+    m_cur_player_index += 1;
+    this->broadcast_playing_pool(Message::get_instance().generate_player_turn(
+        m_turn, m_guessed, this->get_cur_player()->get_name()));
+    m_num_guess_in_turn += 1;
   }
 }
 
@@ -161,6 +199,17 @@ void Game::send_question_to_player(Client &client) {
   client.get_socket().send(message.c_str(), message.length());
 }
 
+pair<int, string> Game::generate_question() {
+  int num_question = this->m_questions_and_answers.size();
+  int random_id = rand() % num_question;
+  pair<string, string> question_answer;
+
+  m_keyword = question_answer.second;
+  m_guessed = string(m_keyword.length(), '_');
+
+  return make_pair(m_keyword.length(), question_answer.first);
+}
+
 void Game::send_game_over_message() {
   string message = "Game over\n";
   broadcast_playing_pool(message);
@@ -168,7 +217,14 @@ void Game::send_game_over_message() {
 
 void Game::broadcast_playing_pool(const string &event) {
   for (auto &client : m_playing_pool) {
-    cout << "HERE PRINT: " << client->get_name() << " " << event;
+    cout << "Sent to " << client->get_name() << ": " << event;
     client->sendEvent(event);
   }
+}
+
+Client *Game::get_cur_player() {
+  if (m_cur_player_index >= m_playing_pool.size()) {
+    m_cur_player_index %= m_playing_pool.size();
+  }
+  return m_playing_pool[m_cur_player_index];
 }
