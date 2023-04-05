@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+using UnityEngine;
+
 public enum ClientType
 {
     Register = 1,
@@ -12,6 +15,8 @@ public class TCPSender
         encoder.AddInt8((sbyte)ClientType.Register);
         encoder.AddString(playerName);
 
+        Log(new { type = ClientType.Register, playerName, });
+
         Send(encoder);
     }
 
@@ -22,6 +27,8 @@ public class TCPSender
         encoder.AddChar(character);
         encoder.AddString(keyword);
 
+        Log(new { type = ClientType.Answer, character, keyword, });
+
         Send(encoder);
     }
 
@@ -31,5 +38,10 @@ public class TCPSender
         TCPEncoder.Log(buffer);
 
         TCPMgr.Instance.Send(buffer);
+    }
+
+    public static void Log(object obj)
+    {
+        Debug.Log(JsonConvert.SerializeObject(obj));
     }
 }
