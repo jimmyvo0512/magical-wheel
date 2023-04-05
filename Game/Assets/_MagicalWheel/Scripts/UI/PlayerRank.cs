@@ -7,8 +7,13 @@ public class PlayerRank : MonoBehaviour
 
     public void Set(int rank, string playerName, int score)
     {
-        this.rank.text = GetRank(rank);
         this.playerName.text = playerName;
+        if (this.playerName.text == GameMgr.Instance.PlayerName)
+        {
+            this.playerName.text += " (You)";
+        }
+
+        this.rank.text = GetRank(rank);
         this.score.text = score.ToString();
     }
 
