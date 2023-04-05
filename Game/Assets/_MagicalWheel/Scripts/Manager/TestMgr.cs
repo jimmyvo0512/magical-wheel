@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestMgr : Singleton<TestMgr>
 {
-    public const bool TEST = true;
+    public bool InTesting => true;
 
     const string QUESTION = "What is a socket address?";
     const string ANSWER = "Tuple";
@@ -24,7 +24,7 @@ public class TestMgr : Singleton<TestMgr>
         players.ForEach(player => playersDict[player] = 0);
     }
 
-    public void Register(string playerName)
+    public async void Register(string playerName)
     {
         foreach (var c in playerName)
         {
@@ -34,8 +34,16 @@ public class TestMgr : Singleton<TestMgr>
                 return;
             }
         }
+
+        players.Add(playerName);
         playersDict[playerName] = 0;
+
         GameMgr.Instance.HandleRegisterResp(RegisterResp.OK);
+
+        await Task.Delay(3000);
+
+        GameMgr.Instance.HandleStartGame(QUESTION, ANSWER.Length, players[0]);
+        OtherPlayersTurns();
     }
 
     public void Answer(string curPlayer, char character, string keyword)
@@ -60,7 +68,7 @@ public class TestMgr : Singleton<TestMgr>
                 {
                     var cur = curKeyword.ToCharArray();
                     cur[i] = character;
-                    curKeyword = cur.ToString();
+                    curKeyword = new string(cur);
 
                     playersDict[curPlayer] += 1;
 

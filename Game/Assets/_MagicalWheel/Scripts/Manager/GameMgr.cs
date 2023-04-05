@@ -26,6 +26,8 @@ public class GameMgr : Singleton<GameMgr>
 
     List<SceneMgr> sceneMgrs => new List<SceneMgr>() { registerSceneMgr, gameSceneMgr, rankSceneMgr };
 
+    bool inTesting => TestMgr.Instance.InTesting;
+
     protected override void Awake()
     {
         base.Awake();
@@ -34,14 +36,32 @@ public class GameMgr : Singleton<GameMgr>
         back.onClick.AddListener(() => SetState(GameState.Register));
     }
 
+    private void Start()
+    {
+        if (inTesting) { HandleConnecting(true); }
+    }
+
     public void Register(string playerName)
     {
         this.playerName = playerName;
+
+        if (inTesting)
+        {
+            TestMgr.Instance.Register(playerName);
+            return;
+        }
+
         TCPSender.Register(this.playerName);
     }
 
     public void Answer(char character, string keyword)
     {
+        if (inTesting)
+        {
+            TestMgr.Instance.Answer(playerName, character, keyword);
+            return;
+        }
+
         TCPSender.Answer(character, keyword);
     }
 
@@ -55,6 +75,7 @@ public class GameMgr : Singleton<GameMgr>
         if (resp == RegisterResp.OK)
         {
             sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleRegisterResp(true));
+            return;
         }
 
         var err = resp == RegisterResp.Invalid ? "Invalid player name!" : "Player name already exists!";
