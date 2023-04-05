@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -29,6 +30,14 @@ public class SceneMgr : MonoBehaviour
     {
         SetStatus(playerName + " just joined!");
     }
+
+    public virtual void HandleStartGame(string question, int answerLen, string playerName) { }
+
+    public virtual void HandlePlayerTurn(int turnId, string playerName) { }
+
+    public virtual void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName) { }
+
+    public virtual void HandleEndGame(Dictionary<string, int> scoreBoard) { }
 
     protected void SetStatus(string status)
     {

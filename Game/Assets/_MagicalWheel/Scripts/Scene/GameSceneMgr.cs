@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,23 +21,28 @@ public class GameSceneMgr : SceneMgr
         return FindObjectOfType<GameSceneMgr>();
     }
 
-    public void HandleStartGame(string question, int answerLen, string playerName)
+    public override void HandleStartGame(string question, int answerLen, string playerName)
     {
+        base.HandleStartGame(question, answerLen, playerName);
+
         this.question.text = question;
         resultKeyword.text = new string('_', answerLen);
     }
 
-    public void HandlePlayerTurn(int turnId, string playerName)
+    public override void HandlePlayerTurn(int turnId, string playerName)
     {
+        base.HandlePlayerTurn(turnId, playerName);
+
         turn.text = "Turn " + turnId.ToString() + ": " + playerName + " is in turn!";
 
         inTurn = playerName == GameMgr.Instance.PlayerName;
         character.interactable = keyword.interactable = submit.interactable = inTurn;
     }
 
-    public void HandleCorrectChar(string playerName)
+    public override void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName)
     {
-        HandlePlayerTurn(0, playerName);
+        base.HandleCorrectChar(scoreBoard, nextPlayerName);
+        HandlePlayerTurn(0, nextPlayerName);
     }
 
     private void Submit()
