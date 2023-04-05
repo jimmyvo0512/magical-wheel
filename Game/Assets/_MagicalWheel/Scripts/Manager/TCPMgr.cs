@@ -35,10 +35,10 @@ public class TCPMgr : Singleton<TCPMgr>
             return;
         }
 
+        LockMessageQueue();
+
         var message = messageQueue.Dequeue();
         TCPReceiver.HandleData(message);
-
-        LockMessageQueue();
     }
 
     public void EnqueueMessage(byte[] message)
