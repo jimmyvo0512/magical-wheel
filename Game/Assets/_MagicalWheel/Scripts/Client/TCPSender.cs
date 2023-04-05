@@ -18,8 +18,8 @@ public class TCPSender
     public static void Answer(char character, string keyword)
     {
         var encoder = new TCPEncoder();
-        encoder.AddChar(character);
         encoder.AddInt8((sbyte)ClientType.Answer);
+        encoder.AddChar(character);
         encoder.AddString(keyword);
 
         Send(encoder);

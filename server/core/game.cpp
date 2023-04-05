@@ -210,7 +210,8 @@ void Game::send_question_to_player(Client &client) {
 pair<int, string> Game::generate_question() {
   int num_question = this->m_questions_and_answers.size();
   int random_id = rand() % num_question;
-  pair<string, string> question_answer;
+
+  pair<string, string> question_answer = m_questions_and_answers[random_id];
 
   m_keyword = question_answer.second;
   m_guessed = string(m_keyword.length(), '_');
