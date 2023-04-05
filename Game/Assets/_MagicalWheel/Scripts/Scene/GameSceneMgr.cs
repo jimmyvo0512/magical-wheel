@@ -2,31 +2,33 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameSceneMgr : MonoBehaviour
+public class GameSceneMgr : SceneMgr
 {
-    [SerializeField] TextMeshProUGUI questionText, hintText, scoreText, statusText;
-    [SerializeField] TMP_InputField answerInputField;
-    [SerializeField] Button submitButton, quitButton;
+    [SerializeField] TextMeshProUGUI question, resultKeyword, turn;
+    [SerializeField] TMP_InputField character, keyword;
+    [SerializeField] Button submit;
 
-    private void Awake()
+    public static GameSceneMgr Get()
     {
-        quitButton.onClick.AddListener(Application.Quit);
+        return FindObjectOfType<GameSceneMgr>();
     }
 
-    public void SetQuestion(string question, int answerLen)
+    public void HandleStartGame(string question, int answerLen, string playerName)
     {
-        questionText.text = question;
-
-        hintText.text = string.Empty;
-        for (var i = 0; i < answerLen; i++)
-        {
-            hintText.text += '*';
-        }
+        this.question.text = question;
+        resultKeyword.text = new string('_', answerLen);
     }
 
-    public void SetTurn(bool canPlay)
+    public void HandlePlayerTurn(int turnId, string playerName)
     {
-        answerInputField.interactable = canPlay;
-        submitButton.interactable = canPlay;
+        turn.text = "Turn " + turnId.ToString() + ": " + playerName + " is in turn!";
+
+        var inTurn = playerName == GameMgr.Instance.PlayerName;
+        character.interactable = keyword.interactable = submit.interactable = inTurn;
+    }
+
+    public void HandleCorrectChar(string playerName)
+    {
+        HandlePlayerTurn(0, playerName);
     }
 }

@@ -6,6 +6,8 @@ public class GameMgr : Singleton<GameMgr>
 {
     string playerName;
 
+    public string PlayerName => playerName;
+
     public void Register(string playerName)
     {
         this.playerName = playerName;

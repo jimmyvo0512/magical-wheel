@@ -1,25 +1,34 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RankSceneMgr : MonoBehaviour
+public class RankSceneMgr : SceneMgr
 {
-    Canvas canvas;
-    Button quitButton;
-    List<TextMeshProUGUI> rankLs;
+    [SerializeField] PlayerRank playerRankPrefab;
 
     private void Awake()
     {
-        canvas = FindObjectOfType<Canvas>();
+        Set(new Dictionary<string, int>());
+    }
 
-        quitButton = canvas.transform.GetChild(0).GetComponent<Button>();
-        quitButton.onClick.AddListener(Application.Quit);
+    public void HandleCorrectChar(Dictionary<string, int> scoreBoard) => Set(scoreBoard);
+    public void HandleEndGame(Dictionary<string, int> scoreBoard) => Set(scoreBoard);
 
-        rankLs = new List<TextMeshProUGUI>();
-        for (var i = 0; i < canvas.transform.childCount; i++)
+    private void Set(Dictionary<string, int> scoreBoard)
+    {
+        foreach (Transform child in Container.transform)
         {
-            rankLs.Add(canvas.transform.GetChild(i).GetComponent<TextMeshProUGUI>());
+            Destroy(child.gameObject);
+        }
+
+        var rankedPlayers = scoreBoard.Keys.OrderBy(player => scoreBoard[player]).ToList();
+        for (var i = 0; i < rankedPlayers.Count; i++)
+        {
+            var rank = Instantiate(playerRankPrefab, Container.transform);
+            rank.Set(i < 3 ? i + 1 : -1, rankedPlayers[i], scoreBoard[rankedPlayers[i]]);
         }
     }
 }
