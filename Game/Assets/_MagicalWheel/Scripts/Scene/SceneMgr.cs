@@ -35,7 +35,7 @@ public class SceneMgr : MonoBehaviour
 
     public virtual void HandlePlayerTurn(int turnId, string playerName) { }
 
-    public virtual void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName) { }
+    public virtual void HandleCorrectChar(string curKeyword, Dictionary<string, int> scoreBoard, string nextPlayerName) { }
 
     public virtual void HandleEndGame(Dictionary<string, int> scoreBoard) { }
 

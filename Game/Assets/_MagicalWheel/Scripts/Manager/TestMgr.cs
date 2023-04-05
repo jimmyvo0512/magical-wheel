@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestMgr : Singleton<TestMgr>
 {
-    public const bool TEST = true;
+    public bool InTesting => true;
 
     const string QUESTION = "What is a socket address?";
     const string ANSWER = "Tuple";
@@ -13,6 +13,7 @@ public class TestMgr : Singleton<TestMgr>
 
     string curKeyword;
     string curPlayer;
+    bool isGameEnd = false;
 
     List<string> players = new List<string>() { "jimmy", "alex", "john" };
     Dictionary<string, int> playersDict = new Dictionary<string, int>();
@@ -24,7 +25,7 @@ public class TestMgr : Singleton<TestMgr>
         players.ForEach(player => playersDict[player] = 0);
     }
 
-    public void Register(string playerName)
+    public async void Register(string playerName)
     {
         foreach (var c in playerName)
         {
@@ -34,8 +35,16 @@ public class TestMgr : Singleton<TestMgr>
                 return;
             }
         }
+
+        players.Add(playerName);
         playersDict[playerName] = 0;
+
         GameMgr.Instance.HandleRegisterResp(RegisterResp.OK);
+
+        await Task.Delay(3000);
+
+        GameMgr.Instance.HandleStartGame(QUESTION, ANSWER.Length, players[0]);
+        OtherPlayersTurns();
     }
 
     public void Answer(string curPlayer, char character, string keyword)
@@ -46,7 +55,7 @@ public class TestMgr : Singleton<TestMgr>
 
     private void CurPlayerAnswer(char character, string keyword)
     {
-        if (keyword == ANSWER)
+        if (keyword == ANSWER.ToLower())
         {
             playersDict[curPlayer] += 5;
             GameMgr.Instance.HandleEndGame(curKeyword, playersDict);
@@ -56,15 +65,22 @@ public class TestMgr : Singleton<TestMgr>
         {
             for (var i = 0; i < ANSWER.Length; i++)
             {
-                if (curKeyword[i] == EMPTY && ANSWER[i] == character)
+                if (curKeyword[i] == EMPTY && ANSWER.ToLower()[i] == character)
                 {
                     var cur = curKeyword.ToCharArray();
                     cur[i] = character;
-                    curKeyword = cur.ToString();
+                    curKeyword = new string(cur);
 
                     playersDict[curPlayer] += 1;
 
-                    GameMgr.Instance.HandleCorrectChar(playersDict, GetNextPlayer());
+                    if (GetRemains().Count <= 0)
+                    {
+                        isGameEnd = true;
+                        GameMgr.Instance.HandleEndGame(curKeyword, playersDict);
+                        return;
+                    }
+
+                    GameMgr.Instance.HandleCorrectChar(curKeyword, playersDict, GetNextPlayer());
                     if (curPlayer == GameMgr.Instance.PlayerName)
                     {
                         OtherPlayersTurns();
@@ -89,6 +105,7 @@ public class TestMgr : Singleton<TestMgr>
             curPlayer = players[i];
             await Task.Delay(3000);
 
+            if (isGameEnd) { return; }
             Answer(players[i], GetRemains()[0], string.Empty);
         }
     }
@@ -100,7 +117,7 @@ public class TestMgr : Singleton<TestMgr>
         {
             if (curKeyword[i] == EMPTY)
             {
-                remains.Add(ANSWER[i]);
+                remains.Add(ANSWER.ToLower()[i]);
             }
         }
 
@@ -109,7 +126,7 @@ public class TestMgr : Singleton<TestMgr>
 
     private string GetNextPlayer()
     {
-        var next = players.IndexOf(curKeyword) + 1;
+        var next = players.IndexOf(curPlayer) + 1;
         return players[next >= players.Count ? 0 : next];
     }
 }

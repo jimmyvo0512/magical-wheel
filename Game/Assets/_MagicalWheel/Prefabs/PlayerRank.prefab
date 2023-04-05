@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
+  m_ChildControlWidth: 0
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
@@ -167,7 +167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5253425755150252036, guid: cae7ed3bef9d88da4945cea5f847953c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 217.55998
       objectReference: {fileID: 0}
     - target: {fileID: 5253425755150252036, guid: cae7ed3bef9d88da4945cea5f847953c, type: 3}
       propertyPath: m_SizeDelta.y
@@ -284,7 +284,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5253425755150252036, guid: cae7ed3bef9d88da4945cea5f847953c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 225.90999
       objectReference: {fileID: 0}
     - target: {fileID: 5253425755150252036, guid: cae7ed3bef9d88da4945cea5f847953c, type: 3}
       propertyPath: m_SizeDelta.y
@@ -401,7 +401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5253425755150252036, guid: cae7ed3bef9d88da4945cea5f847953c, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 273.33
       objectReference: {fileID: 0}
     - target: {fileID: 5253425755150252036, guid: cae7ed3bef9d88da4945cea5f847953c, type: 3}
       propertyPath: m_SizeDelta.y
