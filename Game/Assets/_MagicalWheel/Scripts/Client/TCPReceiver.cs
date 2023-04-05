@@ -26,7 +26,7 @@ public class TCPReceiver
         {
             var decoder = new TCPDecoder(data);
 
-            var svType = (ServerType)decoder.GetInt();
+            var svType = (ServerType)decoder.GetInt8();
             Debug.Log("ServerType: " + svType.ToString());
 
             switch (svType)
@@ -57,25 +57,38 @@ public class TCPReceiver
         {
             Debug.LogError("HandleData Err: " + err.Message);
         }
+        finally
+        {
+            TCPMgr.Instance.UnlockMessageQueue();
+        }
     }
 
     private static void ReceiveRegisterResp(TCPDecoder decoder)
     {
-        var resp = decoder.GetInt8();
-        GameMgr.Instance.HandleRegisterResp((RegisterResp)resp);
+        var resp = (RegisterResp)decoder.GetInt8();
+
+        TCPSender.Log(new { resp });
+
+        GameMgr.Instance.HandleRegisterResp(resp);
     }
 
     private static void ReceiveNewPlayerInform(TCPDecoder decoder)
     {
         var playerName = decoder.GetString();
+
+        TCPSender.Log(new { playerName });
+
         GameMgr.Instance.HandleNewPlayerInform(playerName);
     }
 
     private static void ReceiveStartGame(TCPDecoder decoder)
     {
+        var turnId = decoder.GetInt();
         var answerLen = decoder.GetInt();
         var question = decoder.GetString();
         var playerName = decoder.GetString();
+
+        TCPSender.Log(new { turnId, answerLen, question, playerName });
 
         GameMgr.Instance.HandleStartGame(question, answerLen, playerName);
     }
@@ -83,16 +96,22 @@ public class TCPReceiver
     private static void ReceivePlayerTurn(TCPDecoder decoder)
     {
         var turn = decoder.GetInt();
+        var resKeyword = decoder.GetString();
         var playerName = decoder.GetString();
+
+        TCPSender.Log(new { turn, resKeyword, playerName });
 
         GameMgr.Instance.HandlePlayerTurn(turn, playerName);
     }
 
     private static void ReceiveCorrectChar(TCPDecoder decoder)
     {
+        var turnId = decoder.GetInt();
         var resKeyword = decoder.GetString();
         var scoreBoard = decoder.GetScoreBoard();
         var playerName = decoder.GetString();
+
+        TCPSender.Log(new { turnId, resKeyword, scoreBoard, playerName });
 
         GameMgr.Instance.HandleCorrectChar(resKeyword, scoreBoard, playerName);
     }
@@ -101,6 +120,8 @@ public class TCPReceiver
     {
         var resKeyword = decoder.GetString();
         var scoreBoard = decoder.GetScoreBoard();
+
+        TCPSender.Log(new { resKeyword, scoreBoard });
 
         GameMgr.Instance.HandleEndGame(resKeyword, scoreBoard);
     }

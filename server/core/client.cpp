@@ -1,4 +1,6 @@
 #include "client.h"
+#include <cstring>
+#include <iomanip>
 #include <regex>
 
 Client::Client(int id, Socket socket)
@@ -18,13 +20,16 @@ chrono::time_point<chrono::system_clock> Client::get_join_time() const {
 bool Client::is_register() { return this->m_name == ""; }
 
 void Client::client_register(string name) {
-  cout << name << endl;
   if (m_name == "") {
     regex pattern("[a-zA-Z0-9_]{1,10}");
     if (regex_match(name, pattern)) {
       m_name = name;
-      char message[2] = {0x01, 0x00};
-      this->sendEvent(message);
+      char *message = new char[2];
+      message[0] = 0x01;
+      message[1] = 0x01;
+
+      this->sendEvent(message, 2);
+      delete[] message;
     } else
       throw INVALID_NAME;
 
@@ -43,9 +48,13 @@ int Client::get_points() const { return m_points; }
 
 void Client::add_points(int points) { m_points += points; }
 
-void Client::sendEvent(const string &event) {
-  string message = event;
-  int bytes_sent = m_socket.send(message.c_str(), message.length());
+void Client::sendEvent(char *event, int length) {
+  cout << "Send buffer:" << length << endl;
+  for (int i = 0; i < length; i++)
+    cout << setw(2) << setfill('0') << hex << (int)event[i] << " ";
+  cout << endl;
+
+  int bytes_sent = m_socket.send(event, length);
   if (bytes_sent == -1) {
     cout << "SEND ERR";
     // Handle error...

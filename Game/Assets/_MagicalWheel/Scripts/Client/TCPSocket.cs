@@ -3,12 +3,26 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
+public enum ConnectingState
+{
+    Waiting,
+    Connected,
+    Disconnected,
+}
+
 public class TCPSocket
 {
     const int DATA_SIZE = 4096;
 
     TcpClient socket;
     byte[] rcvBuffer;
+
+    public ConnectingState state;
+
+    public TCPSocket()
+    {
+        state = ConnectingState.Waiting;
+    }
 
     public void Disconnect()
     {
@@ -33,7 +47,7 @@ public class TCPSocket
                 SendBufferSize = DATA_SIZE,
             };
             socket.Client.Blocking = false;
-            socket.BeginConnect(IPAddress.Parse("127.0.0.1"), 7777, ConnectedCallback, socket);
+            socket.BeginConnect(IPAddress.Parse("127.0.0.1"), 8080, ConnectedCallback, socket);
         }
         catch (Exception err)
         {
@@ -78,6 +92,7 @@ public class TCPSocket
             }
 
             Debug.Log("Connected to server!");
+            state = ConnectingState.Connected;
 
             BeginReceive();
         }
@@ -102,7 +117,7 @@ public class TCPSocket
             var data = new byte[len];
             Array.Copy(rcvBuffer, data, len);
 
-            TCPReceiver.HandleData(data);
+            TCPMgr.Instance.EnqueueMessage(data);
 
             BeginReceive();
         }
@@ -114,7 +129,9 @@ public class TCPSocket
 
     private void PanicDisconnect(Exception err)
     {
+        Debug.LogError(err);
         Disconnect();
+        state = ConnectingState.Disconnected;
         throw err;
     }
 }

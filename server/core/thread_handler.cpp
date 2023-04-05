@@ -23,7 +23,7 @@ void *handle_client(void *wrapped_processor) {
          << buffer << endl;
 
     // Print out buffer
-    cout << "Buffer:\n";
+    cout << "Receive buffer:\n";
     for (int i = 0; i < received_bytes; i++)
       cout << setw(2) << setfill('0') << hex << (int)buffer[i] << " ";
     cout << endl;
