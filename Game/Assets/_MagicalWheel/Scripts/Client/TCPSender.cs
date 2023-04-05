@@ -27,6 +27,9 @@ public class TCPSender
 
     private static void Send(TCPEncoder encoder)
     {
-        TCPMgr.Instance.Send(encoder.ToArray());
+        var buffer = encoder.ToArray();
+        TCPEncoder.Log(buffer);
+
+        TCPMgr.Instance.Send(buffer);
     }
 }

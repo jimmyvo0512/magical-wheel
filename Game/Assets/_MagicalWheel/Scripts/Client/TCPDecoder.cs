@@ -10,7 +10,8 @@ public class TCPDecoder
 
     public TCPDecoder(byte[] data)
     {
-        Debug.Log(data.Length);
+        TCPEncoder.Log(data);
+
         buffer = data;
         seekPos = 0;
     }
