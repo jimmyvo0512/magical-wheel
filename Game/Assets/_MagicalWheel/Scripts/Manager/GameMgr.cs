@@ -98,9 +98,9 @@ public class GameMgr : Singleton<GameMgr>
         sceneMgrs.ForEach(sceneMgr => sceneMgr.HandlePlayerTurn(turn, playerName));
     }
 
-    public void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName)
+    public void HandleCorrectChar(string curKeyword, Dictionary<string, int> scoreBoard, string nextPlayerName)
     {
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleCorrectChar(scoreBoard, nextPlayerName));
+        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleCorrectChar(curKeyword, scoreBoard, nextPlayerName));
     }
 
     public void HandleEndGame(string resultKeyword, Dictionary<string, int> scoreBoard)

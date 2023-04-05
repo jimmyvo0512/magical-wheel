@@ -13,6 +13,7 @@ public class TestMgr : Singleton<TestMgr>
 
     string curKeyword;
     string curPlayer;
+    bool isGameEnd = false;
 
     List<string> players = new List<string>() { "jimmy", "alex", "john" };
     Dictionary<string, int> playersDict = new Dictionary<string, int>();
@@ -72,7 +73,14 @@ public class TestMgr : Singleton<TestMgr>
 
                     playersDict[curPlayer] += 1;
 
-                    GameMgr.Instance.HandleCorrectChar(playersDict, GetNextPlayer());
+                    if (GetRemains().Count <= 0)
+                    {
+                        isGameEnd = true;
+                        GameMgr.Instance.HandleEndGame(curKeyword, playersDict);
+                        return;
+                    }
+
+                    GameMgr.Instance.HandleCorrectChar(curKeyword, playersDict, GetNextPlayer());
                     if (curPlayer == GameMgr.Instance.PlayerName)
                     {
                         OtherPlayersTurns();
@@ -97,6 +105,7 @@ public class TestMgr : Singleton<TestMgr>
             curPlayer = players[i];
             await Task.Delay(3000);
 
+            if (isGameEnd) { return; }
             Answer(players[i], GetRemains()[0], string.Empty);
         }
     }
@@ -117,7 +126,7 @@ public class TestMgr : Singleton<TestMgr>
 
     private string GetNextPlayer()
     {
-        var next = players.IndexOf(curKeyword) + 1;
+        var next = players.IndexOf(curPlayer) + 1;
         return players[next >= players.Count ? 0 : next];
     }
 }

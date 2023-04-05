@@ -39,9 +39,11 @@ public class GameSceneMgr : SceneMgr
         character.interactable = keyword.interactable = submit.interactable = inTurn;
     }
 
-    public override void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName)
+    public override void HandleCorrectChar(string curKeyword, Dictionary<string, int> scoreBoard, string nextPlayerName)
     {
-        base.HandleCorrectChar(scoreBoard, nextPlayerName);
+        base.HandleCorrectChar(curKeyword, scoreBoard, nextPlayerName);
+
+        resultKeyword.text = curKeyword;
         HandlePlayerTurn(0, nextPlayerName);
     }
 

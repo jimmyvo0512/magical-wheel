@@ -90,10 +90,11 @@ public class TCPReceiver
 
     private static void ReceiveCorrectChar(TCPDecoder decoder)
     {
+        var resKeyword = decoder.GetString();
         var scoreBoard = decoder.GetScoreBoard();
         var playerName = decoder.GetString();
 
-        GameMgr.Instance.HandleCorrectChar(scoreBoard, playerName);
+        GameMgr.Instance.HandleCorrectChar(resKeyword, scoreBoard, playerName);
     }
 
     private static void ReceiveEndGame(TCPDecoder decoder)

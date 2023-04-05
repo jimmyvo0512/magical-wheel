@@ -14,7 +14,7 @@ public class RankSceneMgr : SceneMgr
         Set(new Dictionary<string, int>());
     }
 
-    public override void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName) => Set(scoreBoard);
+    public override void HandleCorrectChar(string curKeyword, Dictionary<string, int> scoreBoard, string nextPlayerName) => Set(scoreBoard);
     public override void HandleEndGame(Dictionary<string, int> scoreBoard) => Set(scoreBoard);
 
     private void Set(Dictionary<string, int> scoreBoard)
