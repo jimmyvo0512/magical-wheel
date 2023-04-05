@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestMgr : Singleton<TestMgr>
 {
-    public bool InTesting => true;
+    public bool InTesting => false;
 
     const string QUESTION = "What is a socket address?";
     const string ANSWER = "Tuple";

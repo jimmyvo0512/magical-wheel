@@ -20,24 +20,22 @@ public class GameMgr : Singleton<GameMgr>
 
     public string PlayerName => playerName;
 
-    RegisterSceneMgr registerSceneMgr => FindObjectOfType<RegisterSceneMgr>();
-    GameSceneMgr gameSceneMgr => FindObjectOfType<GameSceneMgr>();
-    RankSceneMgr rankSceneMgr => FindObjectOfType<RankSceneMgr>();
+    RegisterSceneMgr registerSceneMgr() { return FindObjectOfType<RegisterSceneMgr>(); }
+    GameSceneMgr gameSceneMgr() { return FindObjectOfType<GameSceneMgr>(); }
+    RankSceneMgr rankSceneMgr() { return FindObjectOfType<RankSceneMgr>(); }
 
-    List<SceneMgr> sceneMgrs => new List<SceneMgr>() { registerSceneMgr, gameSceneMgr, rankSceneMgr };
+    List<SceneMgr> sceneMgrs()
+    {
+        return new List<SceneMgr>() { registerSceneMgr(), gameSceneMgr(), rankSceneMgr() };
+    }
 
     bool inTesting => TestMgr.Instance.InTesting;
 
-    protected override void Awake()
-    {
-        base.Awake();
-
-        SetState(GameState.Register);
-        back.onClick.AddListener(() => SetState(GameState.Register));
-    }
-
     private void Start()
     {
+        SetState(GameState.Register);
+        back.onClick.AddListener(() => SetState(GameState.Register));
+
         if (inTesting) { HandleConnecting(true); }
     }
 
@@ -67,46 +65,46 @@ public class GameMgr : Singleton<GameMgr>
 
     public void HandleConnecting(bool connected)
     {
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleConnecting(connected));
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleConnecting(connected));
     }
 
     public void HandleRegisterResp(RegisterResp resp)
     {
         if (resp == RegisterResp.OK)
         {
-            sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleRegisterResp(true));
+            sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleRegisterResp(true));
             return;
         }
 
         var err = resp == RegisterResp.Invalid ? "Invalid player name!" : "Player name already exists!";
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleRegisterResp(false, err));
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleRegisterResp(false, err));
     }
 
     public void HandleNewPlayerInform(string playerName)
     {
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleNewPlayerInform(playerName));
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleNewPlayerInform(playerName));
     }
 
     public void HandleStartGame(string question, int answerLen, string playerName)
     {
         SetState(GameState.InGame);
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleStartGame(question, answerLen, playerName));
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleStartGame(question, answerLen, playerName));
     }
 
     public void HandlePlayerTurn(int turn, string playerName)
     {
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandlePlayerTurn(turn, playerName));
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandlePlayerTurn(turn, playerName));
     }
 
     public void HandleCorrectChar(string curKeyword, Dictionary<string, int> scoreBoard, string nextPlayerName)
     {
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleCorrectChar(curKeyword, scoreBoard, nextPlayerName));
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleCorrectChar(curKeyword, scoreBoard, nextPlayerName));
     }
 
     public void HandleEndGame(string resultKeyword, Dictionary<string, int> scoreBoard)
     {
         SetState(GameState.EndGame);
-        sceneMgrs.ForEach(sceneMgr => sceneMgr.HandleEndGame(scoreBoard));
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleEndGame(scoreBoard));
     }
 
     private void SetState(GameState state)
@@ -114,21 +112,21 @@ public class GameMgr : Singleton<GameMgr>
         switch (state)
         {
             case GameState.Register:
-                registerSceneMgr.SetMaster(true);
-                gameSceneMgr.SetMaster(false);
-                rankSceneMgr.SetMaster(false);
+                registerSceneMgr().SetMaster(true);
+                gameSceneMgr().SetMaster(false);
+                rankSceneMgr().SetMaster(false);
                 endGame.SetActive(false);
                 return;
             case GameState.InGame:
-                registerSceneMgr.SetMaster(false);
-                gameSceneMgr.SetMaster(true);
-                rankSceneMgr.SetMaster(true);
+                registerSceneMgr().SetMaster(false);
+                gameSceneMgr().SetMaster(true);
+                rankSceneMgr().SetMaster(true);
                 endGame.SetActive(false);
                 return;
             case GameState.EndGame:
-                registerSceneMgr.SetMaster(false);
-                gameSceneMgr.SetMaster(false);
-                rankSceneMgr.SetMaster(true);
+                registerSceneMgr().SetMaster(false);
+                gameSceneMgr().SetMaster(false);
+                rankSceneMgr().SetMaster(true);
                 endGame.SetActive(true);
                 return;
         }

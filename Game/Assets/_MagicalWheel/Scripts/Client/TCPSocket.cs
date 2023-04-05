@@ -33,7 +33,7 @@ public class TCPSocket
                 SendBufferSize = DATA_SIZE,
             };
             socket.Client.Blocking = false;
-            socket.BeginConnect(IPAddress.Parse("127.0.0.1"), 7777, ConnectedCallback, socket);
+            socket.BeginConnect(IPAddress.Parse("127.0.0.1"), 8080, ConnectedCallback, socket);
         }
         catch (Exception err)
         {
@@ -78,6 +78,7 @@ public class TCPSocket
             }
 
             Debug.Log("Connected to server!");
+            GameMgr.Instance.HandleConnecting(true);
 
             BeginReceive();
         }
@@ -114,7 +115,9 @@ public class TCPSocket
 
     private void PanicDisconnect(Exception err)
     {
+        Debug.LogError(err);
         Disconnect();
+        GameMgr.Instance.HandleConnecting(false);
         throw err;
     }
 }
