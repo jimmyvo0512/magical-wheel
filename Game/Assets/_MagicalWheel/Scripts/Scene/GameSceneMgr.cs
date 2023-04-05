@@ -29,6 +29,8 @@ public class GameSceneMgr : SceneMgr
         this.question.text = question;
         resultKeyword.text = new string('_', answerLen);
 
+        SetStatus(GetInTurnStatus(playerName));
+
         TurnPlayer(0, playerName);
     }
 
@@ -36,7 +38,7 @@ public class GameSceneMgr : SceneMgr
     {
         base.HandlePlayerTurn(turnId, playerName);
 
-        SetStatus(playerInTurn + "'s answer is incorrect!");
+        SetStatus(playerInTurn + "'s answer is incorrect!" + "\n" + GetInTurnStatus(playerName));
         TurnPlayer(turnId, playerName);
     }
 
@@ -53,7 +55,7 @@ public class GameSceneMgr : SceneMgr
         base.HandleCorrectChar(curKeyword, scoreBoard, nextPlayerName);
 
         resultKeyword.text = curKeyword;
-        SetStatus(playerInTurn + "'s answer is correct!");
+        SetStatus(playerInTurn + "'s answer is correct!" + "\n" + GetInTurnStatus(nextPlayerName));
 
         TurnPlayer(0, nextPlayerName);
     }
@@ -61,5 +63,10 @@ public class GameSceneMgr : SceneMgr
     private void Submit()
     {
         GameMgr.Instance.Answer(character.text[0], keyword.text);
+    }
+
+    private string GetInTurnStatus(string playerName)
+    {
+        return playerName + " is answering...";
     }
 }
