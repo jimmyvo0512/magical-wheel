@@ -1,4 +1,5 @@
 #include "client.h"
+#include <regex>
 
 Client::Client(int id, Socket socket)
     : m_id(id), m_socket(socket), m_join_time(chrono::system_clock::now()),
@@ -18,10 +19,17 @@ bool Client::is_register() { return this->m_name == ""; }
 
 void Client::client_register(string name) {
   cout << name << endl;
-  if (m_name == "")
-    m_name = name;
-  else
-    throw "Name is already set";
+  if (m_name == "") {
+    regex pattern("[a-zA-Z0-9_]{1,10}");
+    if (regex_match(name, pattern)) {
+      m_name = name;
+      char message[2] = {0x01, 0x00};
+      this->sendEvent(message);
+    } else
+      throw INVALID_NAME;
+
+  } else
+    throw NAME_ALREADY_SET;
 }
 
 string Client::get_name() {
@@ -36,7 +44,7 @@ int Client::get_points() const { return m_points; }
 void Client::add_points(int points) { m_points += points; }
 
 void Client::sendEvent(const string &event) {
-  string message = "EVENT " + event + "\n";
+  string message = event;
   int bytes_sent = m_socket.send(message.c_str(), message.length());
   if (bytes_sent == -1) {
     cout << "SEND ERR";

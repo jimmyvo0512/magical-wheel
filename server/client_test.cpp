@@ -1,4 +1,5 @@
 #include "core/socket.h"
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 

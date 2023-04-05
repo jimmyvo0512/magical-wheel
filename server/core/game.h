@@ -4,17 +4,17 @@
 #include "client.h"
 #include "socket.h"
 #include <chrono>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <pthread.h>
 #include <random>
 #include <stdlib.h>
 #include <string>
-#include <vector>
-#include <cstdlib>
 #include <utility>
-#include <mutex>
+#include <vector>
 
 using namespace std;
 
@@ -25,25 +25,33 @@ using namespace std;
 class Game {
 public:
   Game(string filename, int port);
+
   void start();
   void listen_to_connection();
-  void client_register(Client* client, string name);
+
+  void client_register(Client *client, string name);
+  void validate_guess(char letter, string keyword);
 
 private:
   mutex m_mutex;
   Socket m_server_socket;
   map<int, Client *> m_clients;
-  
-  vector<Client*> m_playing_pool;
-  vector<Client*> m_waiting_pool;
-  
+
+  vector<Client *> m_playing_pool;
+  vector<Client *> m_waiting_pool;
+
   map<int, pthread_t> m_threads;
 
   mutex m_clientMutex;
 
   // Game State
-  bool is_started;
-  int turn;
+  int num_player;
+  bool m_is_started;
+  int m_turn;
+  int m_num_guess_in_turn;
+  int m_cur_player_index;
+  string m_keyword;
+  string m_guessed;
 
   vector<pair<string, string> > m_questions_and_answers;
 
@@ -53,9 +61,13 @@ private:
   int start_socket();
   // void *handle_client(void* data);
   void send_question_to_player(Client &client);
+  pair<int, string> generate_question();
+
   void send_game_over_message();
 
-  void broadcast(const string &event);
+  void broadcast_playing_pool(const string &event);
+
+  Client* get_cur_player();
 };
 
 #endif
