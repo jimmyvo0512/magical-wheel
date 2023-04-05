@@ -65,9 +65,9 @@ private:
 
   void send_game_over_message();
 
-  void broadcast_playing_pool(const string &event);
+  void broadcast_playing_pool(pair<int, char *> event);
 
-  Client* get_cur_player();
+  Client *get_cur_player();
 };
 
 #endif

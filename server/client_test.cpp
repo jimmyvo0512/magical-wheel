@@ -69,6 +69,11 @@ int main() {
 
     buffer[received_bytes] = '\0';
     cout << "Received message from server: " << buffer << endl;
+    cout << "Buffer ";
+    for (int i = 0; i < received_bytes; i++) {
+      cout << setw(2) << setfill('0') << hex << (int)buffer[i] << " ";
+    }
+    cout << endl;
   }
 
   socket.close();

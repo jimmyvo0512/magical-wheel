@@ -18,15 +18,16 @@ Message &Message::get_instance() {
   return *instance;
 }
 
-char *Message::generate_player_joined(string name) {
+pair<int, char *> Message::generate_player_joined(string name) {
+  int length = name.length() + 5;
   Encoder ecd = Encoder(name.length() + 5, 0x02);
   ecd.addStr(name);
 
-  return ecd.get_buffer();
+  return make_pair(length, ecd.get_buffer());
 }
 
-char *Message::generate_question(int turn_id, int len_answer, string desc,
-                                 string player_name) {
+pair<int, char *> Message::generate_question(int turn_id, int len_answer,
+                                             string desc, string player_name) {
   int length = 1 + 4 + 4 + 4 + desc.length() + 4 + player_name.length();
   Encoder ecd = Encoder(length, 0x03);
 
@@ -35,10 +36,11 @@ char *Message::generate_question(int turn_id, int len_answer, string desc,
   ecd.addStr(desc);
   ecd.addStr(player_name);
 
-  return ecd.get_buffer();
+  return make_pair(length, ecd.get_buffer());
 }
 
-char *Message::generate_player_turn(int turn_id, string guessed, string name) {
+pair<int, char *> Message::generate_player_turn(int turn_id, string guessed,
+                                                string name) {
   int length = 1 + 4 + 4 + guessed.length() + 4 + name.length();
   Encoder ecd = Encoder(length, 0x03);
 
@@ -46,7 +48,7 @@ char *Message::generate_player_turn(int turn_id, string guessed, string name) {
   ecd.addStr(guessed);
   ecd.addStr(name);
 
-  return ecd.get_buffer();
+  return make_pair(length, ecd.get_buffer());
 }
 
 int get_score_board_length(vector<Client *> clients) {
@@ -58,9 +60,9 @@ int get_score_board_length(vector<Client *> clients) {
   return length;
 }
 
-char *Message::generate_answer_response(int turn_id, string guessed,
-                                        vector<Client *> clients,
-                                        Client *next_player) {
+pair<int, char *> Message::generate_answer_response(int turn_id, string guessed,
+                                                    vector<Client *> clients,
+                                                    Client *next_player) {
   // <0x05><turn_id><guess_char><score_board><next_player_name_length><next_player_name>
   string next_client_name = next_player->get_name();
   int name_length = next_client_name.length();
@@ -75,11 +77,11 @@ char *Message::generate_answer_response(int turn_id, string guessed,
   ecd.add(&name_length, sizeof(name_length));
   ecd.add(&next_client_name, sizeof(next_client_name));
 
-  return ecd.get_buffer();
+  return make_pair(length, ecd.get_buffer());
 }
 
-char *Message ::generate_end_game(string result_keyword,
-                                  vector<Client *> clients) {
+pair<int, char *> Message::generate_end_game(string result_keyword,
+                                             vector<Client *> clients) {
   int length =
       1 + 4 + result_keyword.length() + 4 + get_score_board_length(clients);
 
@@ -88,7 +90,7 @@ char *Message ::generate_end_game(string result_keyword,
   ecd.addStr(result_keyword);
   ecd.add_score_board(clients);
 
-  return ecd.get_buffer();
+  return make_pair(length, ecd.get_buffer());
 }
 
 string Message::read_register(char *buffer) {
