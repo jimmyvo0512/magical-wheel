@@ -77,6 +77,7 @@ public class TCPReceiver
 
     private static void ReceiveStartGame(TCPDecoder decoder)
     {
+        var turnId = decoder.GetInt();
         var answerLen = decoder.GetInt();
         var question = decoder.GetString();
         var playerName = decoder.GetString();
@@ -87,6 +88,7 @@ public class TCPReceiver
     private static void ReceivePlayerTurn(TCPDecoder decoder)
     {
         var turn = decoder.GetInt();
+        var resKeyword = decoder.GetString();
         var playerName = decoder.GetString();
 
         GameMgr.Instance.HandlePlayerTurn(turn, playerName);
@@ -94,6 +96,7 @@ public class TCPReceiver
 
     private static void ReceiveCorrectChar(TCPDecoder decoder)
     {
+        var turnId = decoder.GetInt();
         var resKeyword = decoder.GetString();
         var scoreBoard = decoder.GetScoreBoard();
         var playerName = decoder.GetString();
