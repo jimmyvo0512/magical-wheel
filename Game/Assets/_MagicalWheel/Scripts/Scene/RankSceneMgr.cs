@@ -24,7 +24,7 @@ public class RankSceneMgr : SceneMgr
             Destroy(child.gameObject);
         }
 
-        var rankedPlayers = scoreBoard.Keys.OrderBy(player => scoreBoard[player]).ToList();
+        var rankedPlayers = scoreBoard.Keys.OrderBy(player => scoreBoard[player]).Reverse().ToList();
         for (var i = 0; i < rankedPlayers.Count; i++)
         {
             var rank = Instantiate(playerRankPrefab, Container.transform);
