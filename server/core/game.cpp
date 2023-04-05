@@ -93,8 +93,16 @@ void Game::client_register(Client *client, string name) {
     }
     cout << " ==> Playing pool length: " << this->m_playing_pool.size() << endl;
 
+    // char *message =
+    //     Message::get_instance().generate_player_joined(client->get_name());
+    // cout << "Buffer ";
+    // for (int i = 0; i < 100; i++) {
+    //   cout << setw(2) << setfill('0') << hex << (int)message[i] << " ";
+    // }
+    // cout << endl;
+
     this->broadcast_playing_pool(
-        Message::get_instance().generate_player_joined(name));
+        Message::get_instance().generate_player_joined(client->get_name()));
 
     if (this->m_playing_pool.size() == 2) {
       m_is_started = true;
@@ -105,7 +113,7 @@ void Game::client_register(Client *client, string name) {
     switch (e) {
     case INVALID_NAME: {
       char message[2] = {0x01, 0x02};
-      client->sendEvent(message);
+      client->sendEvent(message, 2);
       break;
     }
     default:
@@ -210,15 +218,15 @@ pair<int, string> Game::generate_question() {
   return make_pair(m_keyword.length(), question_answer.first);
 }
 
-void Game::send_game_over_message() {
-  string message = "Game over\n";
-  broadcast_playing_pool(message);
-}
+// void Game::send_game_over_message() {
+//   string message = "Game over\n";
+//   broadcast_playing_pool(message);
+// }
 
-void Game::broadcast_playing_pool(const string &event) {
+void Game::broadcast_playing_pool(pair<int, char *> event) {
   for (auto &client : m_playing_pool) {
-    cout << "Sent to " << client->get_name() << ": " << event;
-    client->sendEvent(event);
+    cout << "Sent to " << client->get_name() << endl;
+    client->sendEvent(event.second, event.first);
   }
 }
 

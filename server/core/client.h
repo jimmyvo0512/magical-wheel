@@ -23,7 +23,7 @@ public:
   int get_points() const;
   void add_points(int points);
 
-  void sendEvent(const std::string &event);
+  void sendEvent(char *event, int length);
 
 private:
   int m_id;
