@@ -3,12 +3,26 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
+public enum ConnectingState
+{
+    Waiting,
+    Connected,
+    Disconnected,
+}
+
 public class TCPSocket
 {
     const int DATA_SIZE = 4096;
 
     TcpClient socket;
     byte[] rcvBuffer;
+
+    public ConnectingState state;
+
+    public TCPSocket()
+    {
+        state = ConnectingState.Waiting;
+    }
 
     public void Disconnect()
     {
@@ -78,7 +92,7 @@ public class TCPSocket
             }
 
             Debug.Log("Connected to server!");
-            GameMgr.Instance.HandleConnecting(true);
+            state = ConnectingState.Connected;
 
             BeginReceive();
         }
@@ -117,7 +131,7 @@ public class TCPSocket
     {
         Debug.LogError(err);
         Disconnect();
-        GameMgr.Instance.HandleConnecting(false);
+        state = ConnectingState.Disconnected;
         throw err;
     }
 }

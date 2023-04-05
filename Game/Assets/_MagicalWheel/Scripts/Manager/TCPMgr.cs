@@ -4,6 +4,7 @@ using UnityEngine;
 public class TCPMgr : Singleton<TCPMgr>
 {
     TCPSocket socket;
+    ConnectingState state = ConnectingState.Waiting;
 
     protected override void Awake()
     {
@@ -15,6 +16,23 @@ public class TCPMgr : Singleton<TCPMgr>
     private void Start()
     {
         Connect();
+    }
+
+    private void Update()
+    {
+        if (socket.state != state)
+        {
+            state = socket.state;
+            switch (state)
+            {
+                case ConnectingState.Connected:
+                    GameMgr.Instance.HandleConnecting(true);
+                    return;
+                default:
+                    GameMgr.Instance.HandleConnecting(false);
+                    return;
+            }
+        }
     }
 
     public void Connect()
