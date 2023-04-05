@@ -104,7 +104,7 @@ void Game::client_register(Client *client, string name) {
     cout << "Error: Client register failed. Err: " << e << endl;
     switch (e) {
     case INVALID_NAME: {
-      char message[2] = {0x01, 0x01};
+      char message[2] = {0x01, 0x02};
       client->sendEvent(message);
       break;
     }

@@ -23,7 +23,7 @@ void Client::client_register(string name) {
     regex pattern("[a-zA-Z0-9_]{1,10}");
     if (regex_match(name, pattern)) {
       m_name = name;
-      char message[2] = {0x01, 0x00};
+      char message[2] = {0x01, 0x01};
       this->sendEvent(message);
     } else
       throw INVALID_NAME;

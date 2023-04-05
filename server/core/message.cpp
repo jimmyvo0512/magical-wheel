@@ -19,13 +19,10 @@ Message &Message::get_instance() {
 }
 
 char *Message::generate_player_joined(string name) {
-  int len_name = name.length();
-  char *result = new char[len_name + 5];
-  result[0] = 0x02;
-  memcpy(&result[1], &len_name, 4);
-  memcpy(&(result[5]), name.c_str(), len_name);
+  Encoder ecd = Encoder(name.length() + 5, 0x02);
+  ecd.addStr(name);
 
-  return result;
+  return ecd.get_buffer();
 }
 
 char *Message::generate_question(int turn_id, int len_answer, string desc,
