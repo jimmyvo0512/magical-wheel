@@ -55,7 +55,7 @@ public class TestMgr : Singleton<TestMgr>
 
     private void CurPlayerAnswer(char character, string keyword)
     {
-        if (keyword == ANSWER)
+        if (keyword == ANSWER.ToLower())
         {
             playersDict[curPlayer] += 5;
             GameMgr.Instance.HandleEndGame(curKeyword, playersDict);
@@ -65,7 +65,7 @@ public class TestMgr : Singleton<TestMgr>
         {
             for (var i = 0; i < ANSWER.Length; i++)
             {
-                if (curKeyword[i] == EMPTY && ANSWER[i] == character)
+                if (curKeyword[i] == EMPTY && ANSWER.ToLower()[i] == character)
                 {
                     var cur = curKeyword.ToCharArray();
                     cur[i] = character;
@@ -117,7 +117,7 @@ public class TestMgr : Singleton<TestMgr>
         {
             if (curKeyword[i] == EMPTY)
             {
-                remains.Add(ANSWER[i]);
+                remains.Add(ANSWER.ToLower()[i]);
             }
         }
 
