@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 public class TCPDecoder
 {
@@ -9,10 +10,10 @@ public class TCPDecoder
 
     public TCPDecoder(byte[] data)
     {
+        Debug.Log(data.Length);
         buffer = data;
         seekPos = 0;
     }
-
 
     public Dictionary<string, int> GetScoreBoard()
     {

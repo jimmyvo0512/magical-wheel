@@ -117,7 +117,7 @@ public class TCPSocket
             var data = new byte[len];
             Array.Copy(rcvBuffer, data, len);
 
-            TCPReceiver.HandleData(data);
+            TCPMgr.Instance.EnqueueMessage(data);
 
             BeginReceive();
         }

@@ -26,7 +26,7 @@ public class TCPReceiver
         {
             var decoder = new TCPDecoder(data);
 
-            var svType = (ServerType)decoder.GetInt();
+            var svType = (ServerType)decoder.GetInt8();
             Debug.Log("ServerType: " + svType.ToString());
 
             switch (svType)
@@ -56,6 +56,10 @@ public class TCPReceiver
         catch (Exception err)
         {
             Debug.LogError("HandleData Err: " + err.Message);
+        }
+        finally
+        {
+            TCPMgr.Instance.UnlockMessageQueue();
         }
     }
 
