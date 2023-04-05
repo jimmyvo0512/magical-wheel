@@ -1,4 +1,5 @@
 #include "client.h"
+#include <iomanip>
 #include <regex>
 
 Client::Client(int id, Socket socket)
@@ -45,6 +46,12 @@ void Client::add_points(int points) { m_points += points; }
 
 void Client::sendEvent(const string &event) {
   string message = event;
+
+  cout << "Buffer:\n";
+  for (int i = 0; i < event.length(); i++)
+    cout << setw(2) << setfill('0') << hex << (int)event[i] << " ";
+  cout << endl;
+
   int bytes_sent = m_socket.send(message.c_str(), message.length());
   if (bytes_sent == -1) {
     cout << "SEND ERR";
