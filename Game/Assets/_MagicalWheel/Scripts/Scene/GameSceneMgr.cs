@@ -1,32 +1,52 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameSceneMgr : MonoBehaviour
+public class GameSceneMgr : SceneMgr
 {
-    [SerializeField] TextMeshProUGUI questionText, hintText, scoreText, statusText;
-    [SerializeField] TMP_InputField answerInputField;
-    [SerializeField] Button submitButton, quitButton;
+    [SerializeField] TextMeshProUGUI question, resultKeyword, turn;
+    [SerializeField] TMP_InputField character, keyword;
+    [SerializeField] Button submit;
+
+    bool inTurn = false;
 
     private void Awake()
     {
-        quitButton.onClick.AddListener(Application.Quit);
+        submit.onClick.AddListener(Submit);
     }
 
-    public void SetQuestion(string question, int answerLen)
+    public static GameSceneMgr Get()
     {
-        questionText.text = question;
-
-        hintText.text = string.Empty;
-        for (var i = 0; i < answerLen; i++)
-        {
-            hintText.text += '*';
-        }
+        return FindObjectOfType<GameSceneMgr>();
     }
 
-    public void SetTurn(bool canPlay)
+    public override void HandleStartGame(string question, int answerLen, string playerName)
     {
-        answerInputField.interactable = canPlay;
-        submitButton.interactable = canPlay;
+        base.HandleStartGame(question, answerLen, playerName);
+
+        this.question.text = question;
+        resultKeyword.text = new string('_', answerLen);
+    }
+
+    public override void HandlePlayerTurn(int turnId, string playerName)
+    {
+        base.HandlePlayerTurn(turnId, playerName);
+
+        turn.text = "Turn " + turnId.ToString() + ": " + playerName + " is in turn!";
+
+        inTurn = playerName == GameMgr.Instance.PlayerName;
+        character.interactable = keyword.interactable = submit.interactable = inTurn;
+    }
+
+    public override void HandleCorrectChar(Dictionary<string, int> scoreBoard, string nextPlayerName)
+    {
+        base.HandleCorrectChar(scoreBoard, nextPlayerName);
+        HandlePlayerTurn(0, nextPlayerName);
+    }
+
+    private void Submit()
+    {
+        GameMgr.Instance.Answer(character.text[0], keyword.text);
     }
 }

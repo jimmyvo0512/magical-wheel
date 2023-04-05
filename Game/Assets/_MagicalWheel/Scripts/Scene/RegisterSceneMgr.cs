@@ -2,34 +2,35 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RegisterSceneMgr : MonoBehaviour
+public class RegisterSceneMgr : SceneMgr
 {
-    [SerializeField] TMP_InputField nameInputField;
-    [SerializeField] Button submitButton;
-    [SerializeField] TextMeshProUGUI statusText;
-    [SerializeField] Button quitButton;
+    [SerializeField] TMP_InputField playerName;
+    [SerializeField] Button submit;
 
     private void Awake()
     {
-        quitButton.onClick.AddListener(Application.Quit);
-        submitButton.onClick.AddListener(SubmitName);
+        submit.onClick.AddListener(Register);
+        playerName.interactable = submit.interactable = false;
     }
 
-    public void SetStatus(string status, bool canSubmit)
+    public override void HandleConnecting(bool connected)
     {
-        statusText.text = status;
-        SetCanSubmit(canSubmit);
+        base.HandleConnecting(connected);
+        playerName.interactable = submit.interactable = connected;
     }
 
-    private void SubmitName()
+    public override void HandleRegisterResp(bool ok, string err = null)
     {
-        GameMgr.Instance.Register(nameInputField.text);
-        SetCanSubmit(false);
+        base.HandleRegisterResp(ok, err);
+        if (ok)
+        {
+            playerName.interactable = false;
+            submit.interactable = false;
+        }
     }
 
-    private void SetCanSubmit(bool canSubmit)
+    private void Register()
     {
-        nameInputField.interactable = canSubmit;
-        submitButton.interactable = canSubmit;
+        GameMgr.Instance.Register(playerName.text);
     }
 }
