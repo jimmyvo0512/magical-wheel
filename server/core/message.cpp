@@ -42,7 +42,7 @@ pair<int, char *> Message::generate_question(int turn_id, int len_answer,
 pair<int, char *> Message::generate_player_turn(int turn_id, string guessed,
                                                 string name) {
   int length = 1 + 4 + 4 + guessed.length() + 4 + name.length();
-  Encoder ecd = Encoder(length, 0x03);
+  Encoder ecd = Encoder(length, 0x04);
 
   ecd.add(&turn_id, sizeof(turn_id));
   ecd.addStr(guessed);
@@ -66,16 +66,15 @@ pair<int, char *> Message::generate_answer_response(int turn_id, string guessed,
   // <0x05><turn_id><guess_char><score_board><next_player_name_length><next_player_name>
   string next_client_name = next_player->get_name();
   int name_length = next_client_name.length();
-  int length = 1 + 4 + guessed.length() + get_score_board_length(clients) + 4 +
-               name_length;
+  int length = 1 + 4 + 4 + guessed.length() + get_score_board_length(clients) +
+               4 + name_length;
 
   Encoder ecd = Encoder(length, 0x05);
 
   ecd.add(&turn_id, sizeof(turn_id));
   ecd.addStr(guessed);
   ecd.add_score_board(clients);
-  ecd.add(&name_length, sizeof(name_length));
-  ecd.add(&next_client_name, sizeof(next_client_name));
+  ecd.addStr(next_client_name);
 
   return make_pair(length, ecd.get_buffer());
 }
