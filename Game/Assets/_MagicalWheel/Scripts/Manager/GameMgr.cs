@@ -34,7 +34,7 @@ public class GameMgr : Singleton<GameMgr>
     private void Start()
     {
         SetState(GameState.Register);
-        back.onClick.AddListener(() => SetState(GameState.Register));
+        back.onClick.AddListener(BackToHome);
 
         if (inTesting) { HandleConnecting(true); }
     }
@@ -105,6 +105,12 @@ public class GameMgr : Singleton<GameMgr>
     {
         SetState(GameState.EndGame);
         sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleEndGame(scoreBoard));
+    }
+
+    private void BackToHome()
+    {
+        SetState(GameState.Register);
+        sceneMgrs().ForEach(sceneMgr => sceneMgr.HandleGameAlreadyStarted());
     }
 
     private void SetState(GameState state)
