@@ -31,6 +31,11 @@ public class SceneMgr : MonoBehaviour
         SetStatus(playerName + " just joined!");
     }
 
+    public virtual void HandleGameAlreadyStarted()
+    {
+        SetStatus("The game already started!", true);
+    }
+
     public virtual void HandleStartGame(string question, int answerLen, string playerName) { }
 
     public virtual void HandlePlayerTurn(int turnId, string playerName) { }
@@ -39,7 +44,7 @@ public class SceneMgr : MonoBehaviour
 
     public virtual void HandleEndGame(Dictionary<string, int> scoreBoard) { }
 
-    protected void SetStatus(string status)
+    protected void SetStatus(string status, bool error = false)
     {
         if (this.status == null)
         {
@@ -47,5 +52,6 @@ public class SceneMgr : MonoBehaviour
         }
 
         this.status.text = status;
+        this.status.color = error ? Color.red : Color.white;
     }
 }

@@ -8,6 +8,20 @@
 
 bool is_contain(string s, char c) { return s.find(c) != std::string::npos; }
 
+bool equal_string(string s1, string s2) {
+  if (s1.length() != s2.length()) {
+    return false;
+  }
+
+  for (int i = 0; i < s1.length(); i++) {
+    if (tolower(s1[i]) != tolower(s2[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 Game::Game(string filename, int port)
     : m_random_engine(chrono::system_clock::now().time_since_epoch().count()) {
   m_is_started = false;
@@ -93,14 +107,6 @@ void Game::client_register(Client *client, string name) {
     }
     cout << " ==> Playing pool length: " << this->m_playing_pool.size() << endl;
 
-    // char *message =
-    //     Message::get_instance().generate_player_joined(client->get_name());
-    // cout << "Buffer ";
-    // for (int i = 0; i < 100; i++) {
-    //   cout << setw(2) << setfill('0') << hex << (int)message[i] << " ";
-    // }
-    // cout << endl;
-
     this->broadcast_playing_pool(
         Message::get_instance().generate_player_joined(client->get_name()));
 
@@ -124,7 +130,7 @@ void Game::client_register(Client *client, string name) {
 void Game::validate_guess(char letter, string keyword) {
   if (this->m_turn > 2) {
     // Check keyword
-    if (keyword == this->m_keyword) {
+    if (equal_string(keyword, this->m_keyword)) {
       // Emit end game
       this->get_cur_player()->add_points(5);
       this->broadcast_playing_pool(Message::get_instance().generate_end_game(
@@ -135,26 +141,26 @@ void Game::validate_guess(char letter, string keyword) {
   // Check letter
   if (is_contain(this->m_keyword, letter) &&
       !is_contain(this->m_guessed, letter)) { // True
+
     this->get_cur_player()->add_points(1);
     // Emit Greate guess
     for (int i = 0; i < m_keyword.length(); i++) {
-      if (m_keyword[i] == letter) {
+      if (tolower(m_keyword[i]) == tolower(letter)) {
         m_guessed[i] = letter;
       }
     }
-    m_cur_player_index += 1;
-    this->broadcast_playing_pool(
-        Message::get_instance().generate_answer_response(
-            m_turn, m_guessed, m_playing_pool, this->get_cur_player()));
     m_turn += 1;
     m_cur_player_index += 1;
     m_num_guess_in_turn = 0;
+    this->broadcast_playing_pool(
+        Message::get_instance().generate_answer_response(
+            m_turn, m_guessed, m_playing_pool, this->get_cur_player()));
   } else {
     // Emit Failed guess
     m_cur_player_index += 1;
+    m_num_guess_in_turn += 1;
     this->broadcast_playing_pool(Message::get_instance().generate_player_turn(
         m_turn, m_guessed, this->get_cur_player()->get_name()));
-    m_num_guess_in_turn += 1;
   }
 }
 
