@@ -8,6 +8,20 @@
 
 bool is_contain(string s, char c) { return s.find(c) != std::string::npos; }
 
+bool equal_string(string s1, string s2) {
+  if (s1.length() != s2.length()) {
+    return false;
+  }
+
+  for (int i = 0; i < s1.length(); i++) {
+    if (tolower(s1[i]) != tolower(s2[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 Game::Game(string filename, int port)
     : m_random_engine(chrono::system_clock::now().time_since_epoch().count()) {
   m_is_started = false;
@@ -116,7 +130,7 @@ void Game::client_register(Client *client, string name) {
 void Game::validate_guess(char letter, string keyword) {
   if (this->m_turn > 2) {
     // Check keyword
-    if (keyword == this->m_keyword) {
+    if (equal_string(keyword, this->m_keyword)) {
       // Emit end game
       this->get_cur_player()->add_points(5);
       this->broadcast_playing_pool(Message::get_instance().generate_end_game(
