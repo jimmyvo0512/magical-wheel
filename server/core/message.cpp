@@ -111,7 +111,7 @@ pair<char, string> Message::read_answer(char *buffer) {
   memcpy(&letter, &buffer[1], 1);      // read the length from the char array
   memcpy(&len_keyword, &buffer[2], 4); // read the length from the char array
   char *name = new char[len_keyword + 1];
-  memcpy(name, &buffer[5], len_keyword);
+  memcpy(name, &buffer[6], len_keyword);
   name[len_keyword] = '\0';
 
   string keyword = name;
