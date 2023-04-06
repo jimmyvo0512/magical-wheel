@@ -3,8 +3,6 @@
 #include "message.h"
 #include "thread_handler.h"
 #include "thread_processor.h"
-#include <_ctype.h>
-#include <cctype>
 #include <cstdlib>
 #include <utility>
 
