@@ -1,5 +1,7 @@
 # Magic Wheel
 
+Demo video: <https://youtu.be/tBRXrxkypMo>
+
 ## Packet Structures
 
 ### Server Packets
